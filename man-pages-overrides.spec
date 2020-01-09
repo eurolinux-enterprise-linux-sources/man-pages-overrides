@@ -1,6 +1,6 @@
 Summary: Complementary and updated manual pages
 Name: man-pages-overrides
-Version: 6.8.2
+Version: 6.9.1
 Release: 1%{?dist}
 # man - GPLv2
 License: GPLv2
@@ -11,13 +11,16 @@ Patch0: 1188900-mpo-6.8.1-man-pages-nsswitch-conf.patch
 Patch1: 1099336-mpo-6.7.0-virt-what.patch
 Patch2: 1205377-mpo-6.7.2-pthread_kill.patch
 Patch3: 1231206-mpo-6.8.1-ethtool.patch
-Patch4: 1233049-mpo-6.8.1-psacct.patch
+Patch4: 968454-mpo-6.9.0-dvd+rw-tools.patch
 Patch5: 1234316-mpo-6.8.1-libica.patch
 Patch6: 1249573-mpo-6.8.1-usermode.patch
 Patch7: 1269552-mpo-6.8.1-man-pages-socket.patch
 Patch8: 1295349-mpo-6.8.1-man-pages-rcmd.patch
+Patch9: 1295676-mpo-6.9.0-man-pages-nsswitch-conf.patch
+Patch10: 1122641-mpo-6.9.0-scrub.patch
 Patch11: 615873-mpo-2.1-w3m.patch
 Patch12: 675213-mpo-2.1-usermode.patch
+Patch13: 1295538-mpo-6.9.0-rsyslog.patch
 Patch21: 712256-mpo-6.2.0-volume_key.patch
 Patch30: 731690-mpo-6.2.2-ecryptfs-utils.patch
 Patch37: 801742-mpo-6.3.2-keyutils.patch
@@ -39,7 +42,6 @@ Patch70: 988125-mpo-6.5.1-man-pages-madvise.patch
 Patch71: 903258-mpo-6.5.1-man-pages-fallocate.patch
 Patch72: 957010-mpo-6.5.1-man-pages-strtoul.patch
 Patch73: 928917-mpo-6.5.1-man-pages-open.patch
-Patch74: 979318-mpo-6.5.1-net-tools.patch
 Patch75: 951826-mpo-6.5.1-postfix.patch
 Patch85: 1018622-mpo-6.5.2-arpwatch.patch
 Patch88: 1058738-mpo-6.6.1-nscd.conf.patch
@@ -57,7 +59,6 @@ Patch100: 1099275-mpo-6.6.2-mailx.patch
 Patch103: 1017478-mpo-6.6.2-flock.patch
 Patch105: 889049-mpo-6.6.2-vhostmd.patch
 Patch106: 1087503-mpo-6.6.2-man-pages-codeset.patch
-Patch108: 891928-mpo.6.6.2-man.patch
 Patch109: 781499-mpo-6.6.2-makedeltarpm.patch
 
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -80,8 +81,11 @@ installed.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
+%patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 %patch21 -p1
 %patch30 -p1
 %patch37 -p1
@@ -103,7 +107,6 @@ installed.
 %patch71 -p1
 %patch72 -p1
 %patch73 -p1
-%patch74 -p1
 %patch75 -p1
 %patch85 -p1
 %patch88 -p1
@@ -120,7 +123,6 @@ installed.
 %patch103 -p1
 %patch105 -p1
 %patch106 -p1
-%patch108 -p1
 %patch109 -p1
 
 %install
@@ -162,6 +164,29 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/overrides
 
 %changelog
+* Tue Nov 08 2016 Nikola Forró <nforro@redhat.com> - 6.9.1-1
+- upload new tarball
+  related: #1390141
+- removed bug fixed in original component: #1119595 (man)
+
+* Mon Oct 31 2016 Nikola Forró <nforro@redhat.com> - 6.9.0-1
+- upload new tarball
+  resolves: #1390141
+- removed bug fixed in original component: #1011204 (net-tools)
+- removed bug fixed in original component: #1300192 (psacct)
+- removed bug fixed in original component: #674862 (quagga)
+- growisofs.1: add comment about closing discs
+  resolves: #968454
+- nsswitch.conf.5: mention that "sss" can be used as source
+  for compat pseudo-databases
+  resolves: #1295676
+- adjtimex.2: sync with upstream
+  resolves: #1379392
+- scrub.1: fix description of --freespace option
+  resolves: #1122641
+- rsyslogd.8: remove deprecated info about restart after HUP
+  resolves: #1295538
+
 * Fri Feb 26 2016 Nikola Forró <nforro@redhat.com> - 6.8.2-1
 - upload new tarball
 - add missing rcmd.3 links: iruserok.3 and rresvport.3
