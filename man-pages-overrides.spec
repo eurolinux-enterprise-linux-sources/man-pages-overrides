@@ -1,6 +1,6 @@
 Summary: Complementary and updated manual pages
 Name: man-pages-overrides
-Version: 6.9.1
+Version: 6.10.0
 Release: 1%{?dist}
 # man - GPLv2
 License: GPLv2
@@ -20,7 +20,7 @@ Patch9: 1295676-mpo-6.9.0-man-pages-nsswitch-conf.patch
 Patch10: 1122641-mpo-6.9.0-scrub.patch
 Patch11: 615873-mpo-2.1-w3m.patch
 Patch12: 675213-mpo-2.1-usermode.patch
-Patch13: 1295538-mpo-6.9.0-rsyslog.patch
+Patch13: 1139409-mpo-6.10.0-vsftpd.patch
 Patch21: 712256-mpo-6.2.0-volume_key.patch
 Patch30: 731690-mpo-6.2.2-ecryptfs-utils.patch
 Patch37: 801742-mpo-6.3.2-keyutils.patch
@@ -164,6 +164,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/overrides
 
 %changelog
+* Thu Dec 14 2017 Nikola Forró <nforro@redhat.com> - 6.10.0-1
+- upload new tarball
+  resolves: #1525928
+- removed bug fixed in original component: #1392400 (rsyslog)
+- vsftpd.conf.5: extend description of ascii_download_enable
+  and ascii_upload_enable
+  resolves: #1139409
+
 * Tue Nov 08 2016 Nikola Forró <nforro@redhat.com> - 6.9.1-1
 - upload new tarball
   related: #1390141

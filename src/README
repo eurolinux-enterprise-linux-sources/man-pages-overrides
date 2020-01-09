@@ -1,9 +1,0 @@
-This package contains corrected or additional man pages for various packages
-in various languages.
-
-The man pages are shipped in individual per-package directories. In these
-directories, they are in standard man section subdirectories, e.g.
-"./man/man1/apropos.1.gz".
-
-Licensing: each package has its own licensing terms, they are shipped in the
-respective package directory in files named "COPYING", "LICENSE" or similar.
