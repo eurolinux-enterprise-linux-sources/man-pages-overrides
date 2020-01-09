@@ -1,18 +1,21 @@
 Summary: Complementary and updated manual pages
 Name: man-pages-overrides
-Version: 6.7.5
+Version: 6.8.2
 Release: 1%{?dist}
 # man - GPLv2
 License: GPLv2
 Group: Documentation
 # there is no public download location for this package
 Source0: man-pages-overrides-%{version}.tar.gz
-Patch0: 1140473-mpo-6.7.0-sysstat.patch
+Patch0: 1188900-mpo-6.8.1-man-pages-nsswitch-conf.patch
 Patch1: 1099336-mpo-6.7.0-virt-what.patch
 Patch2: 1205377-mpo-6.7.2-pthread_kill.patch
-Patch3: 1121700-mpo-6.7.0-reposync.patch
-Patch4: 657563-mpo-2.0-findutils.patch
-Patch5: 1207200-mpo-6.7.3-yum-utils-yum-security.8.patch
+Patch3: 1231206-mpo-6.8.1-ethtool.patch
+Patch4: 1233049-mpo-6.8.1-psacct.patch
+Patch5: 1234316-mpo-6.8.1-libica.patch
+Patch6: 1249573-mpo-6.8.1-usermode.patch
+Patch7: 1269552-mpo-6.8.1-man-pages-socket.patch
+Patch8: 1295349-mpo-6.8.1-man-pages-rcmd.patch
 Patch11: 615873-mpo-2.1-w3m.patch
 Patch12: 675213-mpo-2.1-usermode.patch
 Patch21: 712256-mpo-6.2.0-volume_key.patch
@@ -21,7 +24,6 @@ Patch37: 801742-mpo-6.3.2-keyutils.patch
 Patch43: 801783-mpo-6.3.2-ebtables.patch
 Patch45: 653908-mpo-6.3.2-setools.patch
 Patch46: 872526-mpo-6.4.1-dump.patch
-Patch48: 867332-mpo-6.4.1-shadow-utils.patch
 Patch49: 806845-mpo-6.4.1-dmidecode.patch
 Patch52: 846591-mpo-6.4.1-ipmitool.patch
 Patch55: 807323-mpo-6.5.1-byzanz-record.patch
@@ -39,9 +41,7 @@ Patch72: 957010-mpo-6.5.1-man-pages-strtoul.patch
 Patch73: 928917-mpo-6.5.1-man-pages-open.patch
 Patch74: 979318-mpo-6.5.1-net-tools.patch
 Patch75: 951826-mpo-6.5.1-postfix.patch
-Patch80: 884699-mpo-6.5.1-usbutils.patch
 Patch85: 1018622-mpo-6.5.2-arpwatch.patch
-Patch86: 1039986-mpo-6.6.1-vsftpd.patch
 Patch88: 1058738-mpo-6.6.1-nscd.conf.patch
 Patch90: 735949-mpo-6.6.1-gimp-DESTDIR-removed.patch
 Patch91: 988713-mpo-6.6.1-gzip-rsyncable-missing.patch
@@ -54,7 +54,6 @@ Patch98: 1114785-mpo-6.6.2-host.conf.patch
 Patch99: 1099335-mpo-6.6.2-febootstrap-to-supermin.patch
 # mail.1,nail.1,Mail.1 removed by patch. In new tar ball remove them and update this patch.
 Patch100: 1099275-mpo-6.6.2-mailx.patch
-Patch102: 1075152-mpo-6.6.2-xinted.patch
 Patch103: 1017478-mpo-6.6.2-flock.patch
 Patch105: 889049-mpo-6.6.2-vhostmd.patch
 Patch106: 1087503-mpo-6.6.2-man-pages-codeset.patch
@@ -78,6 +77,9 @@ installed.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 %patch11 -p1
 %patch12 -p1
 %patch21 -p1
@@ -86,7 +88,6 @@ installed.
 %patch43 -p1
 %patch45 -p1
 %patch46 -p1
-%patch48 -p1
 %patch49 -p1
 %patch52 -p1
 %patch55 -p1
@@ -104,9 +105,7 @@ installed.
 %patch73 -p1
 %patch74 -p1
 %patch75 -p1
-%patch80 -p1
 %patch85 -p1
-%patch86 -p1
 %patch88 -p1
 %patch90 -p1
 %patch91 -p1
@@ -118,7 +117,6 @@ installed.
 %patch98 -p1
 %patch99 -p1
 %patch100 -p1
-%patch102 -p1
 %patch103 -p1
 %patch105 -p1
 %patch106 -p1
@@ -164,6 +162,38 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/overrides
 
 %changelog
+* Fri Feb 26 2016 Nikola Forró <nforro@redhat.com> - 6.8.2-1
+- upload new tarball
+- add missing rcmd.3 links: iruserok.3 and rresvport.3
+  related: #1295349
+
+* Wed Jan 20 2016 Nikola Forró <nforro@redhat.com> - 6.8.1-1
+- resolves: #1287574
+- removed bug fixed in original component: #1103754 (vsftpd)
+- removed bug fixed in original component: #1188612 (sysstat)
+- removed bug fixed in original component: #1119317 (xinetd)
+- removed bug fixed in original component: #1208155 (yum-utils)
+- removed bug fixed in original component: #1189033 (yum-utils)
+- removed bug fixed in original component: #659730 (findutils)
+- removed bug fixed in original component: #820171 (fuse)
+- removed bug fixed in original component: #878467 (shadow-utils)
+- removed bug fixed in original component: #881734 (alsa-utils)
+- removed bug fixed in original component: #1011232 (usbutils)
+- nsswitch.conf.5: add list of files being read when "files" service is used
+  resolves: #1188900
+- ethtool.8: fix typo in man page
+  resolves: #1231206
+- sa.8: fix invalid option in man page
+  resolves: #1233049
+- icastats.1: fix typos and formatting in man page
+  resolves: #1234316
+- userhelper.8: use consistent capitalization in man page
+  resolves: #1249573
+- socket.7: add SO_REUSEPORT description to man page
+  resolves: #1269552
+- rcmd.3: add missing condition to man page
+  resolves: #1295349
+
 * Tue May 19 2015 jchaloup <jchaloup@redhat.com> - 6.7.5-1
 - Upload new tarball
 - Add missing statfs64 and fstatfs man pages
