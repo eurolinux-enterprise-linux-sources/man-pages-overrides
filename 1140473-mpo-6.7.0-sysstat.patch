@@ -1,0 +1,40 @@
+From a4c0a910e39d786e7b48bac2521a38c4b330420f Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Tue, 3 Feb 2015 12:31:30 +0100
+Subject: [PATCH] The man page of sar(1) describes wrong information about
+ %util
+
+---
+ sysstat/man1/iostat.1 | 2 +-
+ sysstat/man1/sar.1    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sysstat/man1/iostat.1 b/sysstat/man1/iostat.1
+index b583e6e..f6984a2 100644
+--- a/sysstat/man1/iostat.1
++++ b/sysstat/man1/iostat.1
+@@ -307,7 +307,7 @@ will be removed in a future sysstat version.
+ .RE
+ .B %util
+ .RS
+-Percentage of CPU time during which I/O requests were issued to the device
++Percentage of elapsed time during which I/O requests were issued to the device
+ (bandwidth utilization for the device). Device saturation occurs when this
+ value is close to 100%.
+ .RE
+diff --git a/sysstat/man1/sar.1 b/sysstat/man1/sar.1
+index be189af..67e3227 100644
+--- a/sysstat/man1/sar.1
++++ b/sysstat/man1/sar.1
+@@ -304,7 +304,7 @@ to the device.
+ 
+ .B %util
+ .RS
+-Percentage of CPU time during which I/O requests were issued to the device
++Percentage of elapsed time during which I/O requests were issued to the device
+ (bandwidth utilization for the device). Device saturation occurs when this
+ value is close to 100%.
+ .RE
+-- 
+1.9.3
+

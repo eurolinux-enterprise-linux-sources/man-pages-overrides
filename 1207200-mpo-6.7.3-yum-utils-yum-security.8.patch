@@ -1,0 +1,45 @@
+From c1a1d7dc5975aede7b5290b849222d78554802b2 Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Mon, 20 Apr 2015 15:03:19 +0200
+Subject: [PATCH] more detailed explanation for update-minimum with --advisory
+ option in yum-security manpage
+
+---
+ yum-utils/man8/yum-security.8 | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/yum-utils/man8/yum-security.8 b/yum-utils/man8/yum-security.8
+index 295a046..339c179 100644
+--- a/yum-utils/man8/yum-security.8
++++ b/yum-utils/man8/yum-security.8
+@@ -12,9 +12,9 @@ added yum \fIcommand\fPs are:
+ .br 
+ .I \fR yum update-minimal
+ .PP 
+-This works like the update command, but if you have the the package foo-1
+-installed and have foo-2 and foo-3 available with updateinfo.xml then
+-update-minimal will update you to foo-3.
++This works like the update command, but if you have the package foo-1 installed
++and have foo-2 (bugfix) and foo-3 (enhancement) available with updateinfo.xml
++then update-minimal --bugfix will update you to foo-2.
+ .br 
+ .I \fR yum updateinfo info
+ .br 
+@@ -139,6 +139,14 @@ security errata package) use:
+ .IP
+ yum --security update-minimal
+ .PP
++To install the minimal update necessary to satisfy the advisory FEDORA-2707-7654 use:
++.IP
++yum update-minimal --advisory FEDORA-2707-7654
++.PP
++To update all the packages listed in the advisory FEDORA-2707-7654 to their latest versions use:
++.IP
++yum update --advisory FEDORA-2707-7654
++.PP
+ To get a list of all BZs that are fixed for packages you have installed use:
+ .IP
+ yum updateinfo list bugzillas
+-- 
+1.9.3
+

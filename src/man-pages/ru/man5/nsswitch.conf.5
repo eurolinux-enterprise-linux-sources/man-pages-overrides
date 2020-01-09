@@ -1,0 +1,239 @@
+.\" Copyright (c) 1998, 1999 Thorsten Kukuk (kukuk@vt.uni-paderborn.de)
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" This manual page based on the GNU C Library info pages.
+.\" FIXME ? The use of quotes on this page is inconsistent with the
+.\" rest of man-pages.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH NSSWITCH.CONF 5 1999\-01\-17 Linux "Руководство программиста Linux"
+.SH ИМЯ
+nsswitch.conf \- Системные базы данных и файл настроек диспетчера службы имён
+.SH ОПИСАНИЕ
+Для корректной работы в локальном окружении необходима настройка различных
+функций библиотеки языка C. Традиционно это делалось с помощью файлов (таких
+как \fI/etc/passwd\fP), но со временем стали популярны другие службы имён
+(такие как Network Information Service (NIS) и Domain Name Service (DNS)), и
+они были внесены в библиотеку C, причем обычно использовался фиксированный
+порядок поиска.
+.LP
+Linux\-версия libc5 с поддержкой NYS, а также библиотека GNU C 2.x
+(libc.so.6) используют более понятный метод решения этой проблемы. Он был
+разработан по аналогии с методом, использованным в библиотеке C, написанной
+в Sun Microsystems для Solaris 2. Мы используем их название и зовём данную
+схему "Name Service Switch", NSS (диспетчер службы имён). Базы данных, в
+которых ищется информация, и порядок их просмотра задаются в файле
+\fI/etc/nsswitch.conf\fP.
+.LP
+В NSS доступны следующие базы данных:
+.TP 
+\fBaliases\fP
+Почтовые псевдонимы, используемые программой \fBsendmail\fP(8). В данный момент
+игнорируется.
+.TP 
+\fBethers\fP
+Номера ethernet.
+.TP 
+\fBgroup\fP
+Группы пользователей, с которыми работают функции \fBgetgrent\fP(3).
+.TP 
+\fBhosts\fP
+Имена узлов и номера, используемые \fBgethostbyname\fP(3) и подобными
+функциями.
+.TP 
+\fBnetgroup\fP
+Список узлов и пользователей сети, используемый для правил
+доступа. Библиотеки C до версии glibc 2.1 поддерживают сетевые группы только
+посредством NIS.
+.TP 
+\fBnetworks\fP
+Имена и номера сетей, используемые функциями \fBgetnetent\fP(3).
+.TP 
+\fBpasswd\fP
+Пароли пользователей, используемые функциями \fBgetpwent\fP(3).
+.TP 
+\fBprotocols\fP
+Сетевые протоколы, используемые функциями \fBgetprotoent\fP(3).
+.TP 
+\fBpublickey\fP
+Открытые и секретные ключи для Secure_RPC, которая используется в NFS и
+NIS+.
+.TP 
+\fBrpc\fP
+Имена и номера вызовов удаленных процедур, используемых \fBgetrpcbyname\fP(3) и
+подобными функциями.
+.TP 
+\fBservices\fP
+Сетевые службы, используемые функциями \fBgetservent\fP(3).
+.TP 
+\fBshadow\fP
+Теневые пароли пользователей, используемые \fBgetspnam\fP(3).
+.LP
+Пример файла \fI/etc/nsswitch.conf\fP (эти настройки будут использоваться по
+умолчанию, если файл \fI/etc/nsswitch.conf\fP отсутствует):
+.sp 1n
+.PD 0
+.TP  16
+passwd:
+compat
+.TP 
+group:
+compat
+.TP 
+shadow:
+compat
+.sp 1n
+.TP 
+hosts:
+dns [!UNAVAIL=return] files
+.TP 
+networks:
+nis [NOTFOUND=return] files
+.TP 
+ethers:
+nis [NOTFOUND=return] files
+.TP 
+protocols:
+nis [NOTFOUND=return] files
+.TP 
+rpc:
+nis [NOTFOUND=return] files
+.TP 
+services:
+nis [NOTFOUND=return] files
+.PD
+.LP
+Первая колонка \(em это имя базы данных. Остаток строки определяет процесс
+поиска. Вы можете задать каждой базе данных свой процесс.
+.LP
+Описание настройки для каждой базы данных может содержать два разных
+элемента:
+.PD 0
+.TP 
+* описание службы, например `files', `db' или `nis'.
+.TP 
+* реакция на результат поиска, например `[NOTFOUND=return]'.
+.PD
+.LP
+Для libc5 с NYS допустимо указание служб `files', `nis', и `nisplus'. Для
+hosts вы можете в качестве дополнительной службы указать `dns', для passwd и
+group \(em `compat', но не для shadow.
+.LP
+При использовании glibc у вас должен быть файл \fB/lib/libnss_СЛУЖБА.so.\fP\fIX\fP
+для каждой используемой СЛУЖБЫ. При стандартной установке можно использовать
+`files', `db', `nis' и `nisplus'. Для hosts вы можете в качестве
+дополнительной службы указать `dns', для passwd, group и shadow \(em
+`compat'. Эти службы не будут использоваться libc5 с NYS. Номер версии \fIX\fP
+равен 1 для glibc 2.0 и 2 для glibc 2.1.
+.LP
+Второй элемент в описании предоставляет пользователю значительно более
+точный контроль над процессом поиска. Элементы\-действия пишутся между двумя
+именами служб и заключаются в квадратные скобки. Основная форма записи
+такова:
+.LP
+`[' ( `!'? СОСТОЯНИЕ `=' ДЕЙСТВИЕ )+ `]'
+.LP
+где
+.sp 1n
+.PD 0
+.TP 
+СОСТОЯНИЕ => success | notfound | unavail | tryagain
+.TP 
+ДЕЙСТВИЕ => return | continue
+.PD
+.LP
+Регистр букв не важен. СОСТОЯНИЕ \(em это результат вызова функции поиска
+заданной службы. Оно может принимать значения:
+.TP 
+\fBsuccess\fP
+Нужная запись найдена и ошибок не произошло. Для этого состояния действием
+по умолчанию является `return'.
+.TP 
+\fBnotfound\fP
+Процесс поиска отработал, но нужная запись не была найдена. Для этого
+состояния действием по умолчанию является `continue'.
+.TP 
+\fBunavail\fP
+Служба постоянно недоступна. Это может означать, что недоступен нужный файл,
+DNS\-сервер или что запросы запрещены. Для этого состояния действием по
+умолчанию является `continue'.
+.TP 
+\fBtryagain\fP
+Служба временно недоступна. Это может означать, что какой\-либо файл
+заблокирован или что в данный момент сервер не может принять больше
+соединений. Для этого состояния действием по умолчанию является `continue'.
+.SS "Обработка синтаксиса +/\- (режим compat)"
+Linux libc5 без NYS не содержит диспетчера службы имён, но предоставляет
+пользователю некоторую возможность управления процедурой поиска. В файле
+\fI/etc/passwd\fP вы можете сделать записи вида +пользователь или
++@сетевая_группа (включить заданного пользователя из карты NIS passwd),
+\-пользователь или \-@сетевая_группа (исключить заданного пользователя), и +
+(включить каждого пользователя, не считая исключённых, из карты NIS). Так
+как обычно просто помещают + в конец файла \fI/etc/passwd\fP, чтобы включить
+всех пользователей из NIS, то диспетчер в этом случае предоставляет более
+быструю альтернативу (`passwd: files nis'), которая не требует одиночной
+записи + в файлах \fI/etc/passwd\fP, \fI/etc/group\fP и \fI/etc/shadow\fP. Если этого
+недостаточно, то служба NSS `compat' предоставляет полную семантику +/\-. По
+умолчанию, источником является `nis', но он может быть переназначен, если
+задать `nisplus' как источник для псевдобаз данных \fBpasswd_compat\fP,
+\fBgroup_compat\fP и \fBshadow_compat\fP. Эти псевдобазы данных доступны только в
+библиотеке GNU C.
+.SH ФАЙЛЫ
+Каждая СЛУЖБА реализуется через динамическую объектную библиотеку, которая
+называется \fBlibnss_СЛУЖБА.so.\fP\fIX\fP и находится в каталоге \fI/lib\fP.
+.TP  25
+.PD 0
+\fI/etc/nsswitch.conf\fP
+файл с настройками
+.TP 
+\fB/lib/libnss_compat.so.\fP\fIX\fP
+реализует источник `compat' для glibc2
+.TP 
+\fB/lib/libnss_db.so.\fP\fIX\fP
+реализует источник `db' для glibc2
+.TP 
+\fB/lib/libnss_dns.so.\fP\fIX\fP
+реализует источник `dns' для glibc2
+.TP 
+\fB/lib/libnss_files.so.\fP\fIX\fP
+реализует источник `files' для glibc2
+.TP 
+\fB/lib/libnss_hesiod.so.\fP\fIX\fP
+реализует источник `hesiod' для glibc2
+.TP 
+\fB/lib/libnss_nis.so.\fP\fIX\fP
+реализует источник `nis' для glibc2
+.TP 
+\fI/lib/libnss_nisplus.so.2\fP
+реализует источник `nisplus' для glibc 2.1
+.PD
+.SH ЗАМЕЧАНИЯ
+Внутри каждого процесса, который использует файл \fBnsswitch.conf\fP, файл
+полностью читается только один раз; если позднее файл бы изменен, то процесс
+продолжит выполнение, используя старые настройки.
+.LP
+В Solaris невозможно скомпоновать программу статически, использующую службу
+NSS. В Linux такой проблемы нет.
