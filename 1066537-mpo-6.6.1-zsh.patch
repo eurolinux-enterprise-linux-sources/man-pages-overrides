@@ -1,0 +1,39 @@
+From 0478e0f285ce12bba7c69903f0af2845d8faedc3 Mon Sep 17 00:00:00 2001
+From: jchaloup <jchaloup@redhat.com>
+Date: Mon, 2 Jun 2014 16:37:53 +0200
+Subject: [PATCH] missing b emulate option in man pages
+
+---
+ zsh/man1/zsh.1    | 2 +-
+ zsh/man1/zshall.1 | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/zsh/man1/zsh.1 b/zsh/man1/zsh.1
+index ef4a1e6..0800824 100644
+--- a/zsh/man1/zsh.1
++++ b/zsh/man1/zsh.1
+@@ -318,7 +318,7 @@ can be stacked after the `\fB\-b\fP\&' and will take effect as normal\&.
+ Zsh tries to emulate \fBsh\fP or \fBksh\fP when it is invoked as
+ \fBsh\fP or \fBksh\fP respectively; more precisely, it looks at the first
+ letter of the name by which it was invoked, excluding any initial `\fBr\fP\&'
+-(assumed to stand for `restricted\&'), and if that is `\fBs\fP' or `\fBk\fP' it
++(assumed to stand for `restricted\&'), and if that is `\fBb\fP', `\fBs\fP' or `\fBk\fP' it
+ will emulate \fBsh\fP or \fBksh\fP\&.  Furthermore, if invoked as \fBsu\fP (which
+ happens on certain systems when the shell is executed by the \fBsu\fP
+ command), the shell will try to find an alternative name from the \fBSHELL\fP
+diff --git a/zsh/man1/zshall.1 b/zsh/man1/zshall.1
+index 1aae362..e838cb1 100644
+--- a/zsh/man1/zshall.1
++++ b/zsh/man1/zshall.1
+@@ -315,7 +315,7 @@ can be stacked after the `\fB\-b\fP' and will take effect as normal\&.
+ Zsh tries to emulate \fBsh\fP or \fBksh\fP when it is invoked as
+ \fBsh\fP or \fBksh\fP respectively; more precisely, it looks at the first
+ letter of the name by which it was invoked, excluding any initial `\fBr\fP'
+-(assumed to stand for `restricted'), and if that is `\fBs\fP' or `\fBk\fP' it
++(assumed to stand for `restricted'), and if that is `\fBb\fP', `\fBs\fP' or `\fBk\fP' it
+ will emulate \fBsh\fP or \fBksh\fP\&.  Furthermore, if invoked as \fBsu\fP (which
+ happens on certain systems when the shell is executed by the \fBsu\fP
+ command), the shell will try to find an alternative name from the \fBSHELL\fP
+-- 
+1.9.3
+

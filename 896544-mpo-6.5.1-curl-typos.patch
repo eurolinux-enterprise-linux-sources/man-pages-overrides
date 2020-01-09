@@ -1,0 +1,116 @@
+diff -ur man-pages-overrides-6.5.1.orig/curl/man1/curl.1 man-pages-overrides-6.5.1/curl/man1/curl.1
+--- man-pages-overrides-6.5.1.orig/curl/man1/curl.1	2013-09-23 17:53:17.150706977 +0200
++++ man-pages-overrides-6.5.1/curl/man1/curl.1	2013-09-23 17:53:48.516389186 +0200
+@@ -445,7 +445,7 @@
+ .RE
+ (Added in 7.15.1)
+ .IP "--ftp-pasv"
+-(FTP) Use passive mode for the data conection. Passive is the internal default
++(FTP) Use passive mode for the data connection. Passive is the internal default
+ behavior, but using this option can be used to override a previous
+ \fI-P/-ftp-port\fP option. (Added in 7.11.0)
+ 
+@@ -1647,7 +1647,7 @@
+ .IP 65
+ Sending the data requires a rewind that failed.
+ .IP 66
+-Failed to initialise SSL Engine.
++Failed to initialize SSL Engine.
+ .IP 67
+ The user name, password, or similar was not accepted and curl failed to log in.
+ .IP 68
+diff -ur man-pages-overrides-6.5.1.orig/curl/man3/curl_easy_getinfo.3 man-pages-overrides-6.5.1/curl/man3/curl_easy_getinfo.3
+--- man-pages-overrides-6.5.1.orig/curl/man3/curl_easy_getinfo.3	2013-09-23 17:53:17.150706977 +0200
++++ man-pages-overrides-6.5.1/curl/man3/curl_easy_getinfo.3	2013-09-23 17:54:25.347028947 +0200
+@@ -160,7 +160,7 @@
+ .IP CURLINFO_OS_ERRNO
+ Pass a pointer to a long to receive the errno variable from a connect failure.
+ Note that the value is only set on failure, it is not reset upon a
+-successfull operation.  (Added in 7.12.2)
++successful operation.  (Added in 7.12.2)
+ .IP CURLINFO_NUM_CONNECTS
+ Pass a pointer to a long to receive how many new connections libcurl had to
+ create to achieve the previous transfer (only the successful connects are
+diff -ur man-pages-overrides-6.5.1.orig/curl/man3/curl_easy_setopt.3 man-pages-overrides-6.5.1/curl/man3/curl_easy_setopt.3
+--- man-pages-overrides-6.5.1.orig/curl/man3/curl_easy_setopt.3	2013-09-23 17:53:17.150706977 +0200
++++ man-pages-overrides-6.5.1/curl/man3/curl_easy_setopt.3	2013-09-23 17:54:25.348028937 +0200
+@@ -247,7 +247,7 @@
+ Function pointer that should match the \fIcurl_progress_callback\fP prototype
+ found in \fI<curl/curl.h>\fP. This function gets called by libcurl instead of
+ its internal equivalent with a frequent interval during operation (roughly
+-once per second) no matter if data is being transfered or not.  Unknown/unused
++once per second) no matter if data is being transferred or not.  Unknown/unused
+ argument values passed to the callback will be set to zero (like if you only
+ download data, the upload size will remain 0). Returning a non-zero value from
+ this callback will cause libcurl to abort the transfer and return
+@@ -970,7 +970,7 @@
+ multiple cookies in one string like this: "name1=content1; name2=content2;"
+ etc.
+ 
+-Note that this option sets the cookie header explictly in the outgoing
++Note that this option sets the cookie header explicitly in the outgoing
+ request(s). If multiple requests are done due to authentication, followed
+ redirections or similar, they will all get this cookie passed on.
+ 
+@@ -1058,8 +1058,8 @@
+ Specify block size to use for TFTP data transmission. Valid range as per RFC
+ 2348 is 8-65464 bytes. The default of 512 bytes will be used if this option is
+ not specified. The specified block size will only be used pending support by
+-the remote server. If the server does not return an option acknowledgement or
+-returns an option acknowledgement with no blksize, the default of 512 bytes
++the remote server. If the server does not return an option acknowledgment or
++returns an option acknowledgment with no blksize, the default of 512 bytes
+ will be used. (added in 7.19.4)
+ .SH FTP OPTIONS
+ .IP CURLOPT_FTPPORT
+@@ -1159,7 +1159,7 @@
+ 
+ Starting with 7.19.4, you can also set this value to 2, which will make
+ libcurl retry the CWD command again if the subsequent MKD command fails. This
+-is especially useful if you're doing many simultanoes connections against the
++is especially useful if you're doing many simultaneous connections against the
+ same server and they all have this option enabled, as then CWD may first fail
+ but then another connection does MKD before this connection and thus MKD fails
+ but trying CWD works! 7.19.4 also introduced the \fICURLFTP_CREATE_DIR\fP and
+diff -ur man-pages-overrides-6.5.1.orig/curl/man3/curl_global_init.3 man-pages-overrides-6.5.1/curl/man3/curl_global_init.3
+--- man-pages-overrides-6.5.1.orig/curl/man3/curl_global_init.3	2013-09-23 17:53:17.150706977 +0200
++++ man-pages-overrides-6.5.1/curl/man3/curl_global_init.3	2013-09-23 17:54:25.348028937 +0200
+@@ -4,7 +4,7 @@
+ .\"
+ .TH curl_global_init 3 "11 May 2004" "libcurl 7.12" "libcurl Manual"
+ .SH NAME
+-curl_global_init - Global libcurl initialisation
++curl_global_init - Global libcurl initialization
+ .SH SYNOPSIS
+ .B #include <curl/curl.h>
+ .sp
+@@ -48,7 +48,7 @@
+ Initialize the Win32 socket libraries.
+ .TP
+ .B CURL_GLOBAL_NOTHING
+-Initialise nothing extra. This sets no bit.
++Initialize nothing extra. This sets no bit.
+ .SH RETURN VALUE
+ If this function returns non-zero, something went wrong and you cannot use the
+ other curl functions.
+diff -ur man-pages-overrides-6.5.1.orig/curl/man3/curl_global_init_mem.3 man-pages-overrides-6.5.1/curl/man3/curl_global_init_mem.3
+--- man-pages-overrides-6.5.1.orig/curl/man3/curl_global_init_mem.3	2013-09-23 17:53:17.149706987 +0200
++++ man-pages-overrides-6.5.1/curl/man3/curl_global_init_mem.3	2013-09-23 17:54:25.348028937 +0200
+@@ -3,7 +3,7 @@
+ .\"
+ .TH curl_global_init_mem 3 "10 May 2004" "libcurl 7.12.0" "libcurl Manual"
+ .SH NAME
+-curl_global_init_mem - Global libcurl initialisation with memory callbacks
++curl_global_init_mem - Global libcurl initialization with memory callbacks
+ .SH SYNOPSIS
+ .B #include <curl/curl.h>
+ .nf
+@@ -34,7 +34,7 @@
+ .IP "void *calloc_callback(size_t nmemb, size_t size);"
+ To replace calloc()
+ .SH "CAUTION"
+-Manipulating these gives considerable powers to the application to severly
++Manipulating these gives considerable powers to the application to severely
+ screw things up for libcurl. Take care!
+ .SH "SEE ALSO"
+ .BR curl_global_init "(3), "

@@ -1,0 +1,12 @@
+diff -ur man-pages-overrides-6.5.1.orig/usbutils/man1/usb-devices.1 man-pages-overrides-6.5.1/usbutils/man1/usb-devices.1
+--- man-pages-overrides-6.5.1.orig/usbutils/man1/usb-devices.1	2013-09-23 22:32:41.517728323 +0200
++++ man-pages-overrides-6.5.1/usbutils/man1/usb-devices.1	2013-09-23 22:53:06.680274816 +0200
+@@ -13,7 +13,7 @@
+ The output of the script is similar to the \fIusb/devices\fP file
+ available either under \fI/proc/bus\fP (if usbfs is mounted), or under
+ \fI/sys/kernel/debug\fP (if debugfs is mounted there). The script is
+-primairily intended to be used if the file is not available.
++primarily intended to be used if the file is not available.
+ 
+ In contrast to the \fIusb/devices\fP file, this script only lists
+ \fIactive\fP interfaces (those marked with a "*" in the \fIusb/devices\fP

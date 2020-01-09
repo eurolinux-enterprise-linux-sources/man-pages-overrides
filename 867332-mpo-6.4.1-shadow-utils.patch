@@ -1,0 +1,16 @@
+diff -ur man-pages-overrides-6.4.1.orig/shadow-utils/man8/groupmems.8 man-pages-overrides-6.4.1/shadow-utils/man8/groupmems.8
+--- man-pages-overrides-6.4.1.orig/shadow-utils/man8/groupmems.8	2012-11-20 14:42:35.789871006 +0100
++++ man-pages-overrides-6.4.1/shadow-utils/man8/groupmems.8	2012-11-20 14:43:17.249003577 +0100
+@@ -114,6 +114,12 @@
+ .if n \{\
+ .RE
+ .\}
++.PP
++In the Red Hat Enterprise Linux 6 the
++\fBgroupmems\fR
++command is not setuid and regular users cannot use it to manipulate
++the membership of their own group\&. This might change in future
++major releases of the Red Hat Enterprise Linux\&.
+ .SH "CONFIGURATION"
+ .PP
+ The following configuration variables in

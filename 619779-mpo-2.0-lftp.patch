@@ -1,0 +1,14 @@
+diff -up man-pages-overrides-2.0/lftp/man1/lftp.1.pom man-pages-overrides-2.0/lftp/man1/lftp.1
+--- man-pages-overrides-2.0/lftp/man1/lftp.1.pom	2010-06-10 11:28:38.000000000 +0200
++++ man-pages-overrides-2.0/lftp/man1/lftp.1	2011-02-09 17:52:21.000000000 +0100
+@@ -1590,6 +1590,10 @@ new peers are actively searched for.
+ .BR torrent:stop-on-ratio " (real number)"
+ torrent stops when it's complete and ratio reached this number.
+ .TP
++.BR xfer:auto-rename \ (boolean)
++Suggested filenames provided by the server are used if user explicitly
++sets this option to 'on'. As this could be security risk, default is off.
++.TP
+ .BR xfer:clobber \ (boolean)
+ if this setting is off, get commands will not overwrite existing
+ files and generate an error instead.

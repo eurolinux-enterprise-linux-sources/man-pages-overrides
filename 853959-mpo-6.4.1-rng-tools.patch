@@ -1,0 +1,21 @@
+diff -ur man-pages-overrides-6.4.1.orig/rng-tools/man8/rngd.8 man-pages-overrides-6.4.1/rng-tools/man8/rngd.8
+--- man-pages-overrides-6.4.1.orig/rng-tools/man8/rngd.8	2012-11-20 14:23:41.170929542 +0100
++++ man-pages-overrides-6.4.1/rng-tools/man8/rngd.8	2012-11-20 14:25:40.112263665 +0100
+@@ -15,6 +15,7 @@
+ [\fB\-s\fR, \fB\-\-random-step=\fInnn\fR]
+ [\fB\-W\fR, \fB\-\-fill-watermark=\fInnn\fR]
+ [\fB\-t\fR, \fB\-\-timeout=\fInnn\fR]
++[\fB\-n\fR, \fB\-\-no-tpm=\fI1|0\fR]
+ [\fB\-?\fR, \fB\-\-help\fR]
+ [\fB\-V\fR, \fB\-\-version\fR]
+ .RI
+@@ -71,6 +72,9 @@
+ \fB\-t\fI nnn\fR, \fB\-\-timeout=\fInnn\fR
+ Interval written to random-device when the entropy pool is full, in seconds, or 0 to disable (default: 60)
+ .TP
++\fB\-n\fI 1|0\fR, \fB\-\-no-tpm=\fI1|0\fR
++Do not use tpm as a source of random number input (default:0)
++.TP
+ \fB\-?\fR, \fB\-\-help\fR
+ Give a short summary of all program options.
+ .TP

@@ -1,0 +1,196 @@
+From da02d469e2e78b43bf6570218dba59e3d8a6e1f7 Mon Sep 17 00:00:00 2001
+From: jchaloup <jchaloup@redhat.com>
+Date: Mon, 2 Jun 2014 15:39:43 +0200
+Subject: [PATCH] vsftpd.conf man page typo
+
+---
+ vsftpd/man5/vsftpd.conf.5 | 64 ++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 49 insertions(+), 15 deletions(-)
+
+diff --git a/vsftpd/man5/vsftpd.conf.5 b/vsftpd/man5/vsftpd.conf.5
+index fcc6022..1e65b39 100644
+--- a/vsftpd/man5/vsftpd.conf.5
++++ b/vsftpd/man5/vsftpd.conf.5
+@@ -4,7 +4,7 @@ vsftpd.conf \- config file for vsftpd
+ .SH DESCRIPTION
+ vsftpd.conf may be used to control various aspects of vsftpd's behaviour. By
+ default, vsftpd looks for this file at the location
+-.BR /etc/vsftpd.conf .
++.BR /etc/vsftpd/vsftpd.conf .
+ However, you may override this by specifying a command line argument to
+ vsftpd. The command line argument is the pathname of the configuration file
+ for vsftpd. This behaviour is useful because you may wish to use an advanced
+@@ -110,7 +110,7 @@ When enabled, and vsftpd is started in "listen" mode, vsftpd will background
+ the listener process. i.e. control will immediately be returned to the shell
+ which launched vsftpd.
+ 
+-Default: NO
++Default: YES
+ .TP
+ .B check_shell
+ Note! This option only has an effect for non-PAM builds of vsftpd. If disabled,
+@@ -138,7 +138,7 @@ chroot() jail in their home directory upon login. The meaning is slightly
+ different if chroot_local_user is set to YES. In this case, the list becomes
+ a list of users which are NOT to be placed in a chroot() jail.
+ By default, the file containing this list is
+-/etc/vsftpd.chroot_list, but you may override this with the
++/etc/vsftpd/chroot_list, but you may override this with the
+ .BR chroot_list_file
+ setting.
+ 
+@@ -177,7 +177,7 @@ Default: NO
+ .B deny_email_enable
+ If activated, you may provide a list of anonymous password e-mail responses
+ which cause login to be denied. By default, the file containing this list is
+-/etc/vsftpd.banned_emails, but you may override this with the
++/etc/vsftpd/banned_emails, but you may override this with the
+ .BR banned_email_file
+ setting.
+ 
+@@ -408,6 +408,15 @@ http://scarybeastsecurity.blogspot.com/2009/02/vsftpd-210-released.html
+ 
+ Default: YES
+ .TP
++.B reverse_lookup_enable
++Set to YES if you want vsftpd to transform the ip address into the hostname,
++before pam authentication. This is useful if you use pam_access including the
++hostname. If you want vsftpd to run on the environment where the reverse lookup
++for some hostname is available and the name server doesn't respond for a while,
++you should set this to NO to avoid a performance issue.
++
++Default: YES
++.TP
+ .B run_as_launching_user
+ Set to YES if you want vsftpd to run as the user which launched vsftpd. This is
+ useful where root access is not available. MASSIVE WARNING! Do NOT enable this
+@@ -433,7 +442,7 @@ anonymous logins are prevented unless the password provided is listed in the
+ file specified by the
+ .BR email_password_file
+ setting. The file format is one password per line, no extra whitespace. The
+-default filename is /etc/vsftpd.email_passwords.
++default filename is /etc/vsftpd/email_passwords.
+ 
+ Default: NO
+ .TP
+@@ -469,7 +478,8 @@ Default: NO
+ .TP
+ .B ssl_request_cert
+ If enabled, vsftpd will request (but not necessarily require; see
+-.BR require_cert) a certificate on incoming SSL connections. Normally this
++.BR require_cert )
++a certificate on incoming SSL connections. Normally this
+ should not cause any trouble at all, but IBM zOS seems to have issues.
+ (New in v2.0.7).
+ 
+@@ -588,6 +598,14 @@ Self-signed certs do not constitute OK validation. (New in v2.0.6).
+ 
+ Default: NO
+ .TP
++.B userlist_log
++This option is examined if
++.BR userlist_enable
++is activated. If enabled, every login denial based on the user list will be
++logged.
++
++Default: NO
++.TP
+ .B virtual_use_local_privs
+ If enabled, virtual users will use the same privileges as local users. By
+ default, virtual users will use the same privileges as anonymous users, which
+@@ -618,6 +636,21 @@ change it with the setting
+ .BR xferlog_file .
+ 
+ Default: NO
++.TP
++.B isolate_network
++If enabled, use CLONE_NEWNET to isolate the untrusted processes so that
++they can't do arbitrary connect() and instead have to ask the privileged
++process for sockets (
++.BR port_promiscuous
++have to be disabled).
++
++Default: YES
++.TP
++.B isolate
++If enabled, use CLONE_NEWPID and CLONE_NEWIPC to isolate processes to their
++ipc and pid namespaces. So separated processes can not interact with each other.
++
++Default: YES
+ 
+ .SH NUMERIC OPTIONS
+ Below is a list of numeric options. A numeric option must be set to a non
+@@ -715,8 +748,9 @@ Default: 077
+ .B max_clients
+ If vsftpd is in standalone mode, this is the maximum number of clients which
+ may be connected. Any additional clients connecting will get an error message.
++The value 0 switches off the limit.
+ 
+-Default: 0 (unlimited)
++Default: 2000
+ .TP
+ .B max_login_fails
+ After this many login failures, the session is killed.
+@@ -726,9 +760,9 @@ Default: 3
+ .B max_per_ip
+ If vsftpd is in standalone mode, this is the maximum number of clients which
+ may be connected from the same source internet address. A client will get an
+-error message if they go over this limit.
++error message if they go over this limit. The value 0 switches off the limit.
+ 
+-Default: 0 (unlimited)
++Default: 50
+ .TP
+ .B pasv_max_port
+ The maximum port to allocate for PASV style data connections. Can be used to
+@@ -764,7 +798,7 @@ passwords which are not permitted. This file is consulted if the option
+ .BR deny_email_enable
+ is enabled.
+ 
+-Default: /etc/vsftpd.banned_emails
++Default: /etc/vsftpd/banned_emails
+ .TP
+ .B banner_file
+ This option is the name of a file containing text to display when someone
+@@ -803,7 +837,7 @@ is enabled. If the option
+ is enabled, then the list file becomes a list of users to NOT place in a
+ chroot() jail.
+ 
+-Default: /etc/vsftpd.chroot_list
++Default: /etvsftpd.confc/vsftpd.chroot_list
+ .TP
+ .B cmds_allowed
+ This options specifies a comma separated list of allowed FTP commands (post
+@@ -864,7 +898,7 @@ This option can be used to provide an alternate file for usage by the
+ .BR secure_email_list_enable
+ setting.
+ 
+-Default: /etc/vsftpd.email_passwords
++Default: /etc/vsftpd/email_passwords
+ .TP
+ .B ftp_username
+ This is the name of the user we use for handling anonymous FTP. The home
+@@ -987,10 +1021,10 @@ the manual page, on a per-user basis. Usage is simple, and is best illustrated
+ with an example. If you set
+ .BR user_config_dir
+ to be
+-.BR /etc/vsftpd_user_conf
++.BR /etc/vsftpd/user_conf
+ and then log on as the user "chris", then vsftpd will apply the settings in
+ the file
+-.BR /etc/vsftpd_user_conf/chris
++.BR /etc/vsftpd/user_conf/chris
+ for the duration of the session. The format of this file is as detailed in
+ this manual page! PLEASE NOTE that not all settings are effective on a
+ per-user basis. For example, many settings only prior to the user's session
+@@ -1026,7 +1060,7 @@ This option is the name of the file loaded when the
+ .BR userlist_enable
+ option is active.
+ 
+-Default: /etc/vsftpd.user_list
++Default: /etc/vsftpd/user_list
+ .TP
+ .B vsftpd_log_file
+ This option is the name of the file to which we write the vsftpd style
+-- 
+1.9.3
+

@@ -1,0 +1,25 @@
+From 4fe2db520d7743b184efeded8872112df48717e5 Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Tue, 15 Jul 2014 14:24:00 +0200
+Subject: [PATCH] man.1
+
+---
+ man/man1/man.1 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/man/man1/man.1 b/man/man1/man.1
+index eff2548..bc5dc44 100644
+--- a/man/man1/man.1
++++ b/man/man1/man.1
+@@ -21,7 +21,7 @@
+ man \- format and display the on-line manual pages
+ .SH SYNOPSIS
+ .B man 
+-.RB [ \-acdfFhkKtwW ]
++.RB [ \-acdDfFhkKtwW ]
+ .RB [ --path ] 
+ .RB [ \-m 
+ .IR system ] 
+-- 
+1.9.3
+

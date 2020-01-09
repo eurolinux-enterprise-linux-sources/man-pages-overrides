@@ -1,0 +1,43 @@
+From 8bb30500bcc8775ef2ec55f4e70722ff3a635573 Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Wed, 30 Jul 2014 09:06:22 +0200
+Subject: [PATCH] curl
+
+---
+ curl/man1/curl.1             | 4 +++-
+ curl/man3/curl_easy_setopt.3 | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/curl/man1/curl.1 b/curl/man1/curl.1
+index 2a14fac..0b9c5da 100644
+--- a/curl/man1/curl.1
++++ b/curl/man1/curl.1
+@@ -170,7 +170,9 @@ must specify valid ciphers. Read up on SSL cipher list details on this URL:
+ 
+ NSS ciphers are done differently than OpenSSL and GnuTLS. The full list of
+ NSS ciphers is in the NSSCipherSuite entry at this URL:
+-\fIhttp://directory.fedora.redhat.com/docs/mod_nss.html#Directives\fP
++.RS
++\fIhttp://git.fedorahosted.org/cgit/mod_nss.git/plain/docs/mod_nss.html#Directives\fP
++.RE
+ 
+ If this option is used several times, the last one will override the others.
+ .IP "--compressed"
+diff --git a/curl/man3/curl_easy_setopt.3 b/curl/man3/curl_easy_setopt.3
+index 3715494..bdec7e0 100644
+--- a/curl/man3/curl_easy_setopt.3
++++ b/curl/man3/curl_easy_setopt.3
+@@ -1708,7 +1708,9 @@ this option then all known ciphers are disabled and only those passed in
+ are enabled.
+ 
+ You'll find more details about the NSS cipher lists on this URL:
+-\fIhttp://directory.fedora.redhat.com/docs/mod_nss.html#Directives\fP
++.RS
++\fIhttp://git.fedorahosted.org/cgit/mod_nss.git/plain/docs/mod_nss.html#Directives\fP
++.RE
+ 
+ .IP CURLOPT_SSL_SESSIONID_CACHE
+ Pass a long set to 0 to disable libcurl's use of SSL session-ID caching. Set
+-- 
+1.9.3
+

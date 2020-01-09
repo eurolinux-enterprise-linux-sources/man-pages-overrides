@@ -1,0 +1,31 @@
+diff -ur man-pages-overrides-6.5.1.orig/curl/man1/curl.1 man-pages-overrides-6.5.1/curl/man1/curl.1
+--- man-pages-overrides-6.5.1.orig/curl/man1/curl.1	2013-09-23 17:24:07.998399086 +0200
++++ man-pages-overrides-6.5.1/curl/man1/curl.1	2013-09-23 17:24:49.377101011 +0200
+@@ -397,11 +397,8 @@
+ \'curl-ca-bundle.crt\', either in the same directory as curl.exe, or in the
+ Current Working Directory, or in any folder along your PATH.
+ 
+-If curl is built against the NSS SSL library then this option tells
+-curl the nickname of the CA certificate to use within the NSS database
+-defined by the environment variable SSL_DIR (or by default /etc/pki/nssdb).
+-If the NSS PEM PKCS#11 module (libnsspem.so) is available then PEM files
+-may be loaded.
++If curl is built against the NSS SSL library, the NSS PEM PKCS#11 module
++(libnsspem.so) needs to be available for this option to work properly.
+ 
+ If this option is used several times, the last one will be used.
+ .IP "--capath <CA certificate directory>"
+diff -ur man-pages-overrides-6.5.1.orig/curl/man3/curl_easy_setopt.3 man-pages-overrides-6.5.1/curl/man3/curl_easy_setopt.3
+--- man-pages-overrides-6.5.1.orig/curl/man3/curl_easy_setopt.3	2013-09-23 17:24:07.998399086 +0200
++++ man-pages-overrides-6.5.1/curl/man3/curl_easy_setopt.3	2013-09-23 17:25:33.757781539 +0200
+@@ -1602,8 +1602,8 @@
+ Note that option is by default set to the system path where libcurl's cacert
+ bundle is assumed to be stored, as established at build time.
+ 
+-When built against NSS, this is the directory that the NSS certificate
+-database resides in.
++If curl is built against the NSS SSL library, the NSS PEM PKCS#11 module
++(libnsspem.so) needs to be available for this option to work properly.
+ .IP CURLOPT_ISSUERCERT
+ Pass a char * to a zero terminated string naming a file holding a CA
+ certificate in PEM format. If the option is set, an additional check against
