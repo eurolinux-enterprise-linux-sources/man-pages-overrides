@@ -1,0 +1,29 @@
+From e8c2bbfb7eee73341ea2ae5b6e7f8bc0fa1d78cb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Thu, 3 Jan 2019 15:20:26 +0100
+Subject: [PATCH] resolv.conf.5: document use-vc option
+---
+ man-pages/man5/resolv.conf.5 | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/man-pages/man5/resolv.conf.5 b/man-pages/man5/resolv.conf.5
+index 8dc55c0..bd9371b 100644
+--- a/man-pages/man5/resolv.conf.5
++++ b/man-pages/man5/resolv.conf.5
+@@ -269,6 +269,13 @@ as if it were a top level domain (TLD).
+ This option can cause problems if the site has ``localhost'' as a TLD
+ rather than having localhost on one or more elements of the search list.
+ This option has no effect if neither RES_DEFNAMES or RES_DNSRCH is set.
++.TP
++.BR use-vc " (since glibc 2.14)"
++sets
++.BR RES_USEVC
++in
++.IR _res.options .
++This option forces the usage of TCP for DNS resolutions.
+ .\" aef16cc8a4c670036d45590877d411a97f01e0cd
+ .TP
+ .BR no\-reload " (since glibc 2.26)"
+-- 
+2.17.2
+

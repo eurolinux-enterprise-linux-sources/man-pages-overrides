@@ -2,7 +2,7 @@
 
 Summary: Complementary and updated manual pages
 Name: man-pages-overrides
-Version: 7.6.2
+Version: 7.7.3
 Release: 1%{?dist}
 # license is the same as for the man-pages package
 License: GPL+ and GPLv2+ and BSD and MIT and Copyright only and IEEE
@@ -26,7 +26,6 @@ Patch11: 1316009-mpo-7.4.0-mcstransd.8.patch
 Patch12: 1131939-mpo-7.1.0-charsets.7-nl_langinfo.3.patch
 Patch13: 1131859-mpo-7.1.0-host.conf.5.patch
 Patch14: 1269549-mpo-7.3.0-socket.7.patch
-Patch15: 1274949-mpo-7.3.0-userhelper.8.patch
 Patch16: 1278492-mpo-7.3.1-recv.2.patch
 # aarch64 specific patch
 Patch17: 1095371-clone-and-open-for-aarch64.patch
@@ -52,16 +51,15 @@ Patch36: 1390935-mpo-7.4.0-nsswitch.conf.5.patch
 Patch37: 1404478-mpo-7.4.0-packet.7.patch
 Patch38: 1452368-mpo-7.4.2-clone.2.patch
 Patch39: 1560191-mpo-7.6.0-madvise.2.patch
-Patch40: 1488506-mpo-7.5.0-imtest.1.patch
 Patch41: 1573281-mpo-7.6.0-mlock.2-mlock2.2.patch
 Patch42: 1577265-mpo-7.6.0-host.conf.5.patch
 Patch43: 1437003-mpo-7.5.1-aide.1-aide.conf.5.patch
 Patch44: 1422950-mpo-7.5.2-recvmmsg.2-sendmmsg.2.patch
 Patch45: 1495572-mpo-7.6.0-mount.cifs.8.patch
-Patch46: 1538499-mpo-7.6.0-iproute.8.patch
-Patch47: 1543420-mpo-7.6.0-tc-vlan.8.patch
 Patch48: 1598288-mpo-7.6.2-resolv.conf.5.patch
 Patch49: 1607318-mpo-7.6.2-proc.5.patch
+Patch50: 1642394-mpo-7.7.0-execve.2.patch
+Patch51: 1662503-mpo-7.7.0-resolv.conf.5.patch
 
 %description
 A collection of manual ("man") pages to complement other packages or update
@@ -120,6 +118,33 @@ done
 %{_mandir}/overrides/
 
 %changelog
+* Wed Mar 27 2019 Nikola Forró <nforro@redhat.com> - 7.7.3-1
+- Upload new tarball
+  related: #1669129
+- remove bug fixed in original component: #1274949 (usermode)
+
+* Tue Feb 26 2019 Nikola Forró <nforro@redhat.com> - 7.7.2-1
+- Upload new tarball
+  related: #1669129
+- remove bug fixed in original component: #1538499 (iproute)
+- remove bug fixed in original component: #1543420 (iproute)
+
+* Thu Jan 24 2019 Nikola Forró <nforro@redhat.com> - 7.7.1-1
+- Upload new tarball
+  resolves: #1669129
+- remove bug fixed in original component: #1508363 (cyrus-imapd)
+
+* Thu Jan 03 2019 Nikola Forró <nforro@redhat.com> - 7.7.0-2
+- resolv.conf.5: document use-vc option
+  resolves: #1662503
+
+* Mon Nov 26 2018 Nikola Forró <nforro@redhat.com> - 7.7.0-1
+- Upload new tarball
+- name_to_handle_at.2, open_by_handle_at.2: add new manpages
+  resolves: #1635584
+- execve.2: document EAGAIN error
+  resolves: #1642394
+
 * Wed Aug 22 2018 Nikola Forró <nforro@redhat.com> - 7.6.2-1
 - Upload new tarball
   related: #1592800
