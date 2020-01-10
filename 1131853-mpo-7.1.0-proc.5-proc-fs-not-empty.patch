@@ -1,0 +1,26 @@
+From 1add9b12265ac72b655fce77cc832bab271071ca Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Tue, 30 Sep 2014 14:41:23 +0200
+Subject: [PATCH] proc.5 proc/fs not empty
+
+---
+ man-pages/man5/proc.5 | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/man-pages/man5/proc.5 b/man-pages/man5/proc.5
+index ae3bbf0..e4d2fd7 100644
+--- a/man-pages/man5/proc.5
++++ b/man-pages/man5/proc.5
+@@ -1618,7 +1618,8 @@ Then file systems contained in this file are tried
+ (excepted those that are marked with "nodev").
+ .TP
+ .I /proc/fs
+-Empty subdirectory.
++Contains subdirectories that in turn contain files
++with information about (certain) mounted filesystems.
+ .TP
+ .I /proc/ide
+ This directory
+-- 
+1.9.3
+

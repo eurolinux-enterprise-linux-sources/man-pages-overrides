@@ -1,0 +1,30 @@
+From be31bf431ad2a8c13c55412a2667e0593b7f45ca Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Jun 2016 13:08:08 +0200
+Subject: [PATCH 08/17] userhelper.8: fix up exit status description and
+ consistency
+
+---
+ usermode/man8/userhelper.8 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/usermode/man8/userhelper.8 b/usermode/man8/userhelper.8
+index 1a136c6..690806e 100644
+--- a/usermode/man8/userhelper.8
++++ b/usermode/man8/userhelper.8
+@@ -279,10 +279,10 @@ Ran out of memory.
+ Could not find the program.
+ .TP
+ 11
+-exec failed even though program exists.
++Executing the program failed even though it exists.
+ .TP
+ 12
+-the user canceled the operation.
++The user canceled the operation.
+ .TP
+ 255
+ Unknown error.
+-- 
+2.7.4
+

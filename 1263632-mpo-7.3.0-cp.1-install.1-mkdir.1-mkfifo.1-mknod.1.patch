@@ -1,0 +1,113 @@
+From d5df946c7c46ac5474e7ceff6188a95bf1fc0426 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Jun 2016 12:51:21 +0200
+Subject: [PATCH 06/17] cp.1, install.1, mkdir.1, mkfifo.1, mknod.1: update
+ security context options to reflect coreutils change
+
+---
+ man-pages-pl/pl/man1/cp.1      | 7 +++++++
+ man-pages-pl/pl/man1/install.1 | 8 ++++++--
+ man-pages-pl/pl/man1/mkdir.1   | 8 ++++++--
+ man-pages-pl/pl/man1/mkfifo.1  | 9 ++++++---
+ man-pages-pl/pl/man1/mknod.1   | 8 ++++++--
+ 5 files changed, 31 insertions(+), 9 deletions(-)
+
+diff --git a/man-pages-pl/pl/man1/cp.1 b/man-pages-pl/pl/man1/cp.1
+index 24392f4..82af3a3 100644
+--- a/man-pages-pl/pl/man1/cp.1
++++ b/man-pages-pl/pl/man1/cp.1
+@@ -122,6 +122,13 @@ wypisuje bieżące działania
+ \fB\-x\fP, \fB\-\-one\-file\-system\fP
+ pozostaje na tym systemie plików
+ .TP 
++\fB\-Z\fP
++ustawia kontekst bezpieczeństwa SELinux pliku docelowego na domyślny
++.TP 
++\fB\-\-context\fP=\fIKONTEKST\fP
++jak \fB\-Z\fP lub jeśli poda się \fIKONTEKST\fP \- ustawia kontekst bezpieczeństwa
++SELinux lub SMACK na \fIKONTEKST\fP
++.TP 
+ \fB\-\-help\fP
+ wyświetla ten tekst i kończy pracę
+ .TP 
+diff --git a/man-pages-pl/pl/man1/install.1 b/man-pages-pl/pl/man1/install.1
+index 389b275..37d3c52 100644
+--- a/man-pages-pl/pl/man1/install.1
++++ b/man-pages-pl/pl/man1/install.1
+@@ -94,8 +94,12 @@ wyświetla nazwę każdego tworzonego katalogu
+ \fB\-\-preserve\-context\fP
+ zachowuje kontekst bezpieczeństwa SELinux
+ .TP 
+-\fB\-Z\fP, \fB\-\-context\fP=\fIKONTEKST\fP
+-ustawia kontekst bezpieczeństwa SELinux plików i katalogów
++\fB\-Z\fP
++ustawia kontekst bezpieczeństwa SELinux pliku docelowego na domyślny
++.TP 
++\fB\-\-context\fP=\fIKONTEKST\fP
++jak \fB\-Z\fP lub jeśli poda się \fIKONTEKST\fP \- ustawia kontekst bezpieczeństwa
++SELinux lub SMACK na \fIKONTEKST\fP
+ .TP 
+ \fB\-\-help\fP
+ wyświetla ten tekst i kończy pracę
+diff --git a/man-pages-pl/pl/man1/mkdir.1 b/man-pages-pl/pl/man1/mkdir.1
+index e8b43d4..9e84f1b 100644
+--- a/man-pages-pl/pl/man1/mkdir.1
++++ b/man-pages-pl/pl/man1/mkdir.1
+@@ -35,9 +35,13 @@ nadrzędne
+ \fB\-v\fP, \fB\-\-verbose\fP
+ wyświetla komunikat o każdym utworzonym katalogu
+ .TP 
+-\fB\-Z\fP, \fB\-\-context\fP=\fIKONTEKST\fP
++\fB\-Z\fP
+ ustawia kontekst bezpieczeństwa SELinux każdego tworzonego katalogu na
+-\fIKONTEKST\fP
++domyślny
++.TP 
++\fB\-\-context\fP[=\fIKONTEKST\fP]
++jak \fB\-Z\fP lub jeśli poda się \fIKONTEKST\fP \- ustawia kontekst bezpieczeństwa
++SELinux lub SMACK na \fIKONTEKST\fP
+ .TP 
+ \fB\-\-help\fP
+ wyświetla ten tekst i kończy pracę
+diff --git a/man-pages-pl/pl/man1/mkfifo.1 b/man-pages-pl/pl/man1/mkfifo.1
+index 39cd379..97f07d5 100644
+--- a/man-pages-pl/pl/man1/mkfifo.1
++++ b/man-pages-pl/pl/man1/mkfifo.1
+@@ -26,9 +26,12 @@ dla krótkich.
+ ustawia \fITRYB\fP uprawnień, zamiast domyślnego \fBa=rw\fP minus bity ustawione w
+ \fBumask\fP
+ .TP 
+-\fB\-Z\fP, \fB\-\-context\fP=\fIKONTEKST\fP
+-ustawia kontekst bezpieczeństwa SELinux każdego tworzonego potoku nazwanego
+-na \fIKONTEKST\fP
++\fB\-Z\fP
++ustawia kontekst bezpieczeństwa SELinux na domyślny
++.TP 
++\fB\-\-context\fP[=\fIKONTEKST\fP]
++jak \fB\-Z\fP lub jeśli poda się \fIKONTEKST\fP \- ustawia kontekst bezpieczeństwa
++SELinux lub SMACK na \fIKONTEKST\fP
+ .TP 
+ \fB\-\-help\fP
+ wyświetla ten tekst i kończy pracę
+diff --git a/man-pages-pl/pl/man1/mknod.1 b/man-pages-pl/pl/man1/mknod.1
+index 986f6ad..f73ecf8 100644
+--- a/man-pages-pl/pl/man1/mknod.1
++++ b/man-pages-pl/pl/man1/mknod.1
+@@ -28,8 +28,12 @@ dla krótkich.
+ ustawia \fITRYB\fP uprawnień, zamiast domyślnego \fBa=rw\fP minus bity ustawione w
+ \fBumask\fP
+ .TP 
+-\fB\-Z\fP, \fB\-\-context\fP=\fIKONTEKST\fP
+-ustawia kontekst bezpieczeństwa SELinux \fINAZWY\fP na \fIKONTEKST\fP
++\fB\-Z\fP
++ustawia kontekst bezpieczeństwa SELinux na domyślny
++.TP 
++\fB\-\-context\fP[=\fIKONTEKST\fP]
++jak \fB\-Z\fP lub jeśli poda się \fIKONTEKST\fP \- ustawia kontekst bezpieczeństwa
++SELinux lub SMACK na \fIKONTEKST\fP
+ .TP 
+ \fB\-\-help\fP
+ wyświetla ten tekst i kończy pracę
+-- 
+2.7.4
+

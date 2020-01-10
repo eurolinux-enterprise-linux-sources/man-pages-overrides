@@ -1,0 +1,155 @@
+From ccb6cba4970f6ed30a62e984fb8ed6ed2fe251a9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Thu, 30 Jun 2016 13:51:27 +0200
+Subject: [PATCH] cp.1, install.1, mkdir.1, mkfifo.1, mknod.1: update security
+ context options to reflect coreutils change
+
+bz1263635
+---
+ man-pages-fr/fr/man1/cp.1      |  8 ++++++++
+ man-pages-fr/fr/man1/install.1 |  8 ++++++++
+ man-pages-fr/fr/man1/mkdir.1   | 12 ++++++++++--
+ man-pages-fr/fr/man1/mkfifo.1  | 12 ++++++++++--
+ man-pages-fr/fr/man1/mknod.1   | 16 ++++++++++++----
+ 5 files changed, 48 insertions(+), 8 deletions(-)
+
+diff --git a/man-pages-fr/fr/man1/cp.1 b/man-pages-fr/fr/man1/cp.1
+index 251c87a..e450b2e 100644
+--- a/man-pages-fr/fr/man1/cp.1
++++ b/man-pages-fr/fr/man1/cp.1
+@@ -330,6 +330,14 @@ Afficher le nom de chaque fichier avant de le copier.
+ .B "\-x, \-\-one-file-system"
+ Ignorer les sous-répertoires se trouvant sur un système de fichiers
+ différent de celui du départ de la copie.
++.TP
++.B "\-Z"
++Fixez le contexte de sécurité SELinux du fichier de destination
++au type par défaut.
++.TP
++.BI "\-\-context" "[=CTX]"
++Comme \fB\-Z\fR ou, si CTX est spécifié, fixez le contexte
++de sécurité SELinux ou SMACK à CTX.
+ .SH OPTIONS DE SAUVEGARDE GNU
+ Les versions GNU des programmes comme
+ .BR cp ,
+diff --git a/man-pages-fr/fr/man1/install.1 b/man-pages-fr/fr/man1/install.1
+index 0c80537..68c1b52 100644
+--- a/man-pages-fr/fr/man1/install.1
++++ b/man-pages-fr/fr/man1/install.1
+@@ -125,6 +125,14 @@ peut être mentionné sous forme numérique ou par son nom.
+ .TP
+ .B "\-s, \-\-strip"
+ Réduire la table des symboles des exécutables binaires installés.
++.TP
++.B "\-Z"
++Fixez le contexte de sécurité SELinux du fichier de destination
++au type par défaut.
++.TP
++.BI "\-\-context" "[=CTX]"
++Comme \fB\-Z\fR ou, si CTX est spécifié, fixez le contexte
++de sécurité SELinux ou SMACK à CTX.
+ .SH OPTIONS DE SAUVEGARDE GNU
+ Les versions GNU des programmes comme
+ .BR cp ,
+diff --git a/man-pages-fr/fr/man1/mkdir.1 b/man-pages-fr/fr/man1/mkdir.1
+index 252449b..31b2f47 100644
+--- a/man-pages-fr/fr/man1/mkdir.1
++++ b/man-pages-fr/fr/man1/mkdir.1
+@@ -52,8 +52,13 @@ Afficher un message pour chaque répertoire créé. Ceci est essentiellement
+ utile en conjonction avec l'option
+ .BR "\-\-parents" .
+ .TP
+-.B "\-\-"
+-Fin explicite de la liste des options.
++.B "\-Z"
++Fixez le contexte de sécurité SELinux de chaque répertoire créé
++au type par défaut.
++.TP
++.BI "\-\-context" "[=CTX]"
++Comme \fB\-Z\fR ou, si CTX est spécifié, fixez le contexte
++de sécurité SELinux ou SMACK à CTX.
+ .SH OPTIONS STANDARDS GNU
+ .TP
+ .B "\-\-help"
+@@ -62,6 +67,9 @@ Afficher un message d'aide sur la sortie standard, et se terminer normalement.
+ .B "\-\-version"
+ Afficher un numéro de version sur la sortie standard, et se terminer
+ normalement.
++.TP
++.B "\-\-"
++Fin explicite de la liste des options.
+ .SH ENVIRONNEMENT
+ Les variables d'environnement LANG, LC_ALL, LC_CTYPE et LC_MESSAGES ont
+ leur signification habituelle.
+diff --git a/man-pages-fr/fr/man1/mkfifo.1 b/man-pages-fr/fr/man1/mkfifo.1
+index 4be114e..b4916cf 100644
+--- a/man-pages-fr/fr/man1/mkfifo.1
++++ b/man-pages-fr/fr/man1/mkfifo.1
+@@ -45,8 +45,13 @@ est fourni de manière symbolique, comme pour
+ en utilisant
+ l'autorisation par défaut comme valeur de départ.
+ .TP
+-.B "\-\-"
+-Fin explicite de la liste des options.
++.B "\-Z"
++Fixez le contexte de sécurité SELinux
++au type par défaut.
++.TP
++.BI "\-\-context" "[=CTX]"
++Comme \fB\-Z\fR ou, si CTX est spécifié, fixez le contexte
++de sécurité SELinux ou SMACK à CTX.
+ .SH OPTIONS STANDARDS GNU
+ .TP
+ .B "\-\-help"
+@@ -54,6 +59,9 @@ Afficher un message d'aide sur la sortie standard, et se terminer normalement.
+ .TP
+ .B "\-\-version"
+ Afficher un numéro de version sur la sortie standard, et se terminer normalement.
++.TP
++.B "\-\-"
++Fin explicite de la liste des options.
+ .SH ENVIRONNEMENT
+ Les variables d'environnement LANG, LC_ALL, LC_TYPE et LC_MESSAGES ont leur
+ significations habituelles.
+diff --git a/man-pages-fr/fr/man1/mknod.1 b/man-pages-fr/fr/man1/mknod.1
+index d46d0a4..dafb8a6 100644
+--- a/man-pages-fr/fr/man1/mknod.1
++++ b/man-pages-fr/fr/man1/mknod.1
+@@ -82,22 +82,30 @@ Par défaut le mode de création est 0666 («\ a+rw\ ») moins les bits se trouv
+ dans le umask.
+ .SS OPTIONS
+ .TP
+-.I "\-m, \-\-mode mode"
++.BI "\-m " mode ", \-\-mode=" mode
+ Indique les autorisations d'accès au fichier,
+ .I mode
+ étant fourni sous forme symbolique, comme pour
+ .BR chmod (1),
+ les permissions par défaut étant utilisées comme valeur de départ.
++.TP
++.B "\-Z"
++Fixez le contexte de sécurité SELinux
++au type par défaut.
++.TP
++.BI "\-\-context" "[=CTX]"
++Comme \fB\-Z\fR ou, si CTX est spécifié, fixez le contexte
++de sécurité SELinux ou SMACK à CTX.
+ .SH OPTIONS STANDARDS GNU
+ .TP
+-.I "\-\-help"
++.B "\-\-help"
+ Afficher un message d'aide sur la sortie standard, et se terminer normalement.
+ .TP
+-.I "\-\-version"
++.B "\-\-version"
+ Afficher un numéro de version sur la sortie standard, et se terminer
+ normalement.
+ .TP
+-.I "\-\-"
++.B "\-\-"
+ Terminer la liste des options.
+ .SH CONFORMITÉ
+ POSIX ne décrit pas cette commande, considérée comme non portable, et
+-- 
+2.7.4
+

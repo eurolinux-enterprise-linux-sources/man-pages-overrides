@@ -1,0 +1,30 @@
+From 8777be0e850672270d50d31ab8d417c27af71389 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Fri, 29 Jul 2016 15:34:53 +0200
+Subject: [PATCH 19/19] recv.2: add deprecation note about recv() syscall
+
+---
+ man-pages/man2/____recv.2 | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/man-pages/man2/____recv.2 b/man-pages/man2/____recv.2
+index 7056eb2..8a948ab 100644
+--- a/man-pages/man2/____recv.2
++++ b/man-pages/man2/____recv.2
+@@ -57,6 +57,13 @@ recv, recvfrom, recvmsg \- receive a message from a socket
+ .BI "ssize_t recvmsg(int " sockfd ", struct msghdr *" msg ", int " flags );
+ .fi
+ .SH DESCRIPTION
++.BR recv ()
++system call is DEPRECATED, use
++.BR recvfrom ()
++with a NULL
++.I src_addr
++argument!
++.PP
+ The
+ .BR recvfrom ()
+ and
+-- 
+2.7.4
+

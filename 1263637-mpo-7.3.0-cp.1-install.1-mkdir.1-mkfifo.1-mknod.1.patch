@@ -1,0 +1,112 @@
+From 0c89a04f410b13e6bf1b67980cf37c82294a62e7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Wed, 29 Jun 2016 10:06:41 +0200
+Subject: [PATCH 20/20] cp.1, install.1, mkdir.1, mkfifo.1, mknod.1: update
+ security context options to reflect coreutils change
+
+---
+ man-pages-es/es/man1/cp.1      | 8 ++++++++
+ man-pages-es/es/man1/install.1 | 8 ++++++++
+ man-pages-es/es/man1/mkdir.1   | 8 ++++++++
+ man-pages-es/es/man1/mkfifo.1  | 8 ++++++++
+ man-pages-es/es/man1/mknod.1   | 8 ++++++++
+ 5 files changed, 40 insertions(+)
+
+diff --git a/man-pages-es/es/man1/cp.1 b/man-pages-es/es/man1/cp.1
+index d1bcb75..95a89aa 100644
+--- a/man-pages-es/es/man1/cp.1
++++ b/man-pages-es/es/man1/cp.1
+@@ -230,6 +230,14 @@ Muestra el nombre de cada fichero antes de copiarlo.
+ .B "\-x, \-\-one\-file\-system"
+ Se salta subdirectorios que estén en sistemas de ficheros diferentes
+ de aquél en el que empezó la copia.
++.TP
++.B "\-Z"
++Establece el contexto de seguridad de SELinux del fichero de destino
++al tipo predeterminado.
++.TP
++.BI "\-\-context" "[=CTX]"
++Al igual que \fB\-Z\fR o, si se especifica CTX,
++establece el contexto de seguridad SELinux o SMACK a CTX.
+ .SH "OPCIONES DE RESPALDO DE GNU"
+ Las versiones de GNU de programas como
+ .BR cp ,
+diff --git a/man-pages-es/es/man1/install.1 b/man-pages-es/es/man1/install.1
+index 18a8acc..8e04ccc 100644
+--- a/man-pages-es/es/man1/install.1
++++ b/man-pages-es/es/man1/install.1
+@@ -178,6 +178,14 @@ copias simples de los otros.
+ .BR never ", " simple
+ Siempre hace copias de respaldo simples.
+ .RE
++.TP
++.B "\-Z"
++Establece el contexto de seguridad de SELinux del fichero de destino
++al tipo predeterminado.
++.TP
++.BI "\-\-context" "[=CTX]"
++Al igual que \fB\-Z\fR o, si se especifica CTX,
++establece el contexto de seguridad SELinux o SMACK a CTX.
+ .SH "OPCIONES ESTÁNDARES DE GNU"
+ .TP
+ .B "\-\-help"
+diff --git a/man-pages-es/es/man1/mkdir.1 b/man-pages-es/es/man1/mkdir.1
+index 9943b91..542c3fd 100644
+--- a/man-pages-es/es/man1/mkdir.1
++++ b/man-pages-es/es/man1/mkdir.1
+@@ -47,6 +47,14 @@ un error, pero `mkdir \-p /a' no lo es.)
+ .B "\-\-verbose"
+ Muestra un mensaje para cada directorio creado. Esto es más útil con
+ .BR "\-\-parents" .
++.TP
++.B "\-Z"
++Establece el contexto de seguridad de SELinux de cada directorio creado
++al tipo predeterminado.
++.TP
++.BI "\-\-context" "[=CTX]"
++Al igual que \fB\-Z\fR o, si se especifica CTX,
++establece el contexto de seguridad SELinux o SMACK a CTX.
+ .SH "OPCIONES ESTÁNDARES DE GNU"
+ .TP
+ .B "\-\-help"
+diff --git a/man-pages-es/es/man1/mkfifo.1 b/man-pages-es/es/man1/mkfifo.1
+index d1c5156..da7c659 100644
+--- a/man-pages-es/es/man1/mkfifo.1
++++ b/man-pages-es/es/man1/mkfifo.1
+@@ -39,6 +39,14 @@ Establece los permisos de los FIFOs creados a
+ que puede ser simbólico como en
+ .BR chmod (1)
+ y emplea el modo predeterminado como punto de partida.
++.TP
++.B "\-Z"
++Establece el contexto de seguridad de SELinux
++al tipo predeterminado.
++.TP
++.BI "\-\-context" "[=CTX]"
++Al igual que \fB\-Z\fR o, si se especifica CTX,
++establece el contexto de seguridad SELinux o SMACK a CTX.
+ .SH "OPCIONES ESTÁNDARES DE GNU"
+ .TP
+ .B "\-\-help"
+diff --git a/man-pages-es/es/man1/mknod.1 b/man-pages-es/es/man1/mknod.1
+index 3eaebd4..41bd090 100644
+--- a/man-pages-es/es/man1/mknod.1
++++ b/man-pages-es/es/man1/mknod.1
+@@ -86,6 +86,14 @@ Establece los permisos de los ficheros creados a
+ que es simbólico como en
+ .BR chmod (1)
+ y emplea el modo predeterminado como punto de partida.
++.TP
++.B "\-Z"
++Establece el contexto de seguridad de SELinux
++al tipo predeterminado.
++.TP
++.BI "\-\-context" "[=CTX]"
++Al igual que \fB\-Z\fR o, si se especifica CTX,
++establece el contexto de seguridad SELinux o SMACK a CTX.
+ .SH "OPCIONES ESTÁNDARES DE GNU"
+ .TP
+ .B "\-\-help"
+-- 
+2.7.4
+

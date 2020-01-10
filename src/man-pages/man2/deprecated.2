@@ -1,0 +1,191 @@
+.\" Copyright (c) 2014 Jan Chaloupka <jchaloup@redhat.com>
+.\" Copyright (c) 2014 Jeff Bastian <jbastian@redhat.com>
+.\"
+.\" %%%LICENSE_START(VERBATIM)
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one.
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" %%%LICENSE_END
+.\"
+.TH DEPRECATED 2 2014-08-11 "Linux" "Linux Programmer's Manual"
+.SH NAME
+none \- deprecated system calls
+.SH SYNOPSIS
+Deprecated system calls
+.SH DESCRIPTION
+This man page mentions those system calls which are deprecated for
+the current architecture.
+.SS The list
+.BR access (2),
+.BR alarm (2),
+.BR bdflush (2),
+.BR chmod (2),
+.BR chown (2),
+.BR creat (2),
+.BR dup2 (2),
+.BR epoll_create (2),
+.BR epoll_wait (2),
+.BR eventfd (2),
+.BR fork (2),
+.BR futimesat (2),
+.BR getdents (2),
+.BR getpgrp (2),
+.BR inotify_init (2),
+.BR lchown (2),
+.BR link (2),
+.BR mkdir (2),
+.BR mknod (2),
+.BR open (2),
+.BR pause (2),
+.BR pipe (2),
+.BR poll (2),
+.BR readlink (2),
+.BR recv (2),
+.BR rename (2),
+.BR rmdir (2),
+.BR select (2),
+.BR send (2),
+.BR signalfd (2),
+.BR symlink (2),
+.BR sysctl (2),
+.BR time (2),
+.BR umount (2),
+.BR unlink (2),
+.BR uselib (2),
+.BR ustat (2),
+.BR utime (2),
+.BR utimes (2),
+.BR vfork (2),
+.BR wait4 (2).
+
+.SS Replacement for deprecated syscalls
+.LP
+.LP
+.TS
+tab (@);
+l c l.
+Deprecated@@Replacement
+_
+\fBaccess\fR(2)@   @\fBfaccessat\fR(2)
+\fBalarm\fR(2)@   @\fBgetitimer\fR(2), \fBsetitimer\fR(2)
+\fBbdflush\fR(2)@   @no replacement, see kernel pdflush thread
+\fBchmod\fR(2)@   @\fBfchmodat\fR(2)
+\fBchown\fR(2)@   @\fBfchownat\fR(2)
+\fBcreat\fR(2)@   @\fBopen\fR(2) with O_CREAT flag
+\fBdup2\fR(2)@   @\fBdup3\fR(2) with flags set to 0
+\fBepoll_create\fR(2)@   @\fBepoll_create1\fR(2), see also \fBepoll_ctl\fR(2))
+\fBepoll_wait\fR(2)@   @\fBepoll_pwait\fR(2), see also \fBepoll_ctl\fR(2))
+\fBeventfd\fR(2)@   @\fBeventfd2\fR(2)
+\fBfork\fR(2)@  @T{
+equivalent to a call to \fBclone(2)\fR specifying
+.br
+flags as just SIGCHLD
+T}
+\fBfutimesat\fR(2)@   @\fButimensat\fR(2)
+\fBgetdents\fR(2)@   @\fBgetdents64\fR(2), or \fBreaddir\fR(3) for glibc wrapper
+\fBgetpgrp\fR(2)@   @\fBgetpgid\fR(2)
+\fBinotify_init\fR(2)@   @\fBinotify_init1\fR(2)
+\fBlchown\fR(2)@   @\fBfchownat\fR(2) with AT_SYMLINK_NOFOLLOW flag
+\fBlink\fR(2)@   @\fBlinkat\fR(2)
+\fBmkdir\fR(2)@   @\fBmkdirat\fR(2)
+\fBmknod\fR(2)@   @\fBmknodat\fR(2)
+\fBopen\fR(2)@   @\fBopenat\fR(2)
+\fBpause\fR(2)@   @\fBsigsuspend\fR(2), \fBppoll\fR(2), or \fBpselect\fR(2)
+\fBpipe\fR(2)@   @\fBpipe2\fR(2)
+\fBpoll\fR(2)@   @\fBppoll\fR(2)
+\fBreadlink\fR(2)@   @\fBreadlinkat\fR(2)
+\fBrecv\fR(2)@   @\fBrecvfrom\fR(2) with a NULL src_addr argument
+\fBrename\fR(2)@   @\fBrenameat\fR(2)
+\fBrmdir\fR(2)@   @\fBunlinkat\fR(2) with AT_REMOVEDIR flag
+\fBselect\fR(2)@   @\fBpselect\fR(2)
+\fBsend\fR(2)@   @\fBsendto\fR(2) with a NULL dest_addr
+\fBsignalfd\fR(2)@   @\fBsignalfd4\fR(2)
+\fBsymlink\fR(2)@   @\fBsymlinkat\fR(2)
+\fBsysctl\fR(2)@   @no replacement, use /proc/sys filesystem
+\fBtime\fR(2)@   @T{
+\fBgettimeofday\fR(2), to improve performance,
+.br
+the system call can be avoided by mapping
+.br
+the time into a vDSO segment
+T}
+\fBumount\fR(2)@   @\fBumount2\fR(2)
+\fBunlink\fR(2)@   @\fBunlinkat\fR(2)
+\fBuselib\fR(2)@   @T{
+no replacement, see \fBdlopen\fR(3) and EXAMPLE
+.br
+section of this manual page
+T}
+\fBustat\fR(2)@   @\fBstatfs\fR(2)
+\fButime\fR(2)@   @\fButimensat\fR(2)
+\fButimes\fR(2)@   @\fButimensat\fR(2)
+\fBvfork\fR(2)@   @T{
+equivalent to calling \fBclone\fR(2) with flags
+.br
+specified as CLONE_VM | CLONE_VFORK | SIGCHLD
+T}
+\fBwait4\fR(2)@   @\fBwaitpid\fR(2) or \fBwaitid\fR(2)
+.TE
+
+.SH EXAMPLES
+.SS uselib(2) syscall example 
+Running strace on the following code in Red Hat Enterprise Linux Server for ARM on aarch64 along with RHEL 7 on x86_64, ppc64, and s390x outputs:
+.LP
+.nf
+    #include <unistd.h>
+    int main(void)
+    {
+        uselib("/usr/lib64/libtinfo.so.5.9");
+    }
+.fi
+
+.B On aarch64:
+.nf
+    # uname -r
+    3.17.0-0.rc6.45.sa2.aarch64
+    # strace -e trace=uselib ./a.out
+    +++ exited with 255 +++
+.fi
+
+.B On x86_64:
+.nf
+    # uname -r
+    3.10.0-123.8.1.el7.x86_64
+    # strace -e trace=uselib ./a.out
+    uselib("/usr/lib64/libtinfo.so.5")      = -1 ENOSYS (Function not implemented)
+    +++ exited with 255 +++
+.fi
+
+.B On ppc64:
+.nf
+    # uname -r
+    3.10.0-123.el7.ppc64
+    # strace -e trace=uselib ./a.out
+    uselib("/usr/lib64/libtinfo.so.5.9")    = -1 ENOEXEC (Exec format error)
+    +++ exited with 32 +++
+.fi
+
+.B On s390x:
+.nf
+    # uname -r
+    3.10.0-123.el7.s390x
+    # strace -e trace=uselib ./a.out
+    uselib("/usr/lib64/libtinfo.so.5.9")    = -1 ENOEXEC (Exec format error)
+    +++ exited with 160 +++
+.fi

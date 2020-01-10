@@ -1,0 +1,44 @@
+From 8b74fb5abd8e08f3b1e5cc2847b9650e94abe616 Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Mon, 29 Sep 2014 22:52:57 +0200
+Subject: [PATCH] Latin1 default UTF-8 recommended encoding
+
+---
+ man-pages/man3/nl_langinfo.3 | 7 +++++++
+ man-pages/man7/charsets.7    | 2 ++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/man-pages/man3/nl_langinfo.3 b/man-pages/man3/nl_langinfo.3
+index e38614d..3962a6a 100644
+--- a/man-pages/man3/nl_langinfo.3
++++ b/man-pages/man3/nl_langinfo.3
+@@ -113,6 +113,13 @@ next call to
+ .BR nl_langinfo ()
+ or
+ .BR setlocale (3).
++.PP
++Codeset for en_US defaults to ISO-8859-1 (Latin-1).
++The Latin-1 default has historical reasons,
++since all Unix systems originally used only 8-bit character encoding.
++For more information about ISO-8859-1 see
++.BR charsets (7).
++
+ .SH CONFORMING TO
+ SUSv2, POSIX.1-2001.
+ .SH EXAMPLE
+diff --git a/man-pages/man7/charsets.7 b/man-pages/man7/charsets.7
+index 05ff56c..45fd5ad 100644
+--- a/man-pages/man7/charsets.7
++++ b/man-pages/man7/charsets.7
+@@ -29,6 +29,8 @@ ASCII, GB 2312, ISO 8859, JIS, KOI8-R, KS, and Unicode.
+ The primary emphasis is on character sets that were actually used by
+ locale character sets, not the myriad others that could be found in data
+ from other systems.
++.LP
++The recommended encoding in all settings and locales is UTF-8.
+ .SS ASCII
+ ASCII (American Standard Code For Information Interchange) is the original
+ 7-bit character set, originally designed for American English.
+-- 
+1.9.3
+

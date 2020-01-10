@@ -1,0 +1,31 @@
+From 7b3766eb42ec6525e9b350f76c0cc0622c99f9a8 Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Mon, 29 Sep 2014 22:28:35 +0200
+Subject: [PATCH] addition to FROM syntax
+
+---
+ mailx/man1/mailx.1 | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/mailx/man1/mailx.1 b/mailx/man1/mailx.1
+index c1dd9a4..5181dd3 100644
+--- a/mailx/man1/mailx.1
++++ b/mailx/man1/mailx.1
+@@ -219,6 +219,14 @@ and, in case of a string option,
+ assigns
+ .I value
+ to it.
++Note, that when setting
++.I from
++variable, domain name of host is automatically added if value does not contain any.
++If you want to enter
++.I from
++address with owner's name, you can use, for example, following format:
++.B -S
++.I \(dqfrom=System User <DoNotReply>\(dq
+ .TP
+ .BI \-T \ name
+ Writes the `Message-Id:' and `Article-Id:' header fields
+-- 
+1.9.3
+

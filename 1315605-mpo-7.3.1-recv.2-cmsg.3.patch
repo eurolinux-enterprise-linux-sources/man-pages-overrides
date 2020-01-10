@@ -1,0 +1,72 @@
+From 111803a7b99abd01d487b00f7cce5b6d142a755c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Jun 2016 14:00:16 +0200
+Subject: [PATCH 11/19] recv.2, cmsg.3: fix type of cmsg_len member of cmsghdr
+ structure
+
+---
+ man-pages/man2/____recv.2 |  7 ++++---
+ man-pages/man2/recv.2     |  7 ++++---
+ man-pages/man3/cmsg.3     | 10 ++++++----
+ 3 files changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/man-pages/man2/____recv.2 b/man-pages/man2/____recv.2
+index 3ac8ef4..7056eb2 100644
+--- a/man-pages/man2/____recv.2
++++ b/man-pages/man2/____recv.2
+@@ -341,9 +341,10 @@ The messages are of the form:
+ .nf
+ 
+ struct cmsghdr {
+-    socklen_t     cmsg_len;     /* data byte count, including hdr */
+-    int           cmsg_level;   /* originating protocol */
+-    int           cmsg_type;    /* protocol-specific type */
++    size_t cmsg_len;    /* Data byte count, including header
++                           (type is socklen_t in POSIX) */
++    int    cmsg_level;  /* Originating protocol */
++    int    cmsg_type;   /* Protocol-specific type */
+ /* followed by
+     unsigned char cmsg_data[]; */
+ };
+diff --git a/man-pages/man2/recv.2 b/man-pages/man2/recv.2
+index 3ac8ef4..7056eb2 100644
+--- a/man-pages/man2/recv.2
++++ b/man-pages/man2/recv.2
+@@ -341,9 +341,10 @@ The messages are of the form:
+ .nf
+ 
+ struct cmsghdr {
+-    socklen_t     cmsg_len;     /* data byte count, including hdr */
+-    int           cmsg_level;   /* originating protocol */
+-    int           cmsg_type;    /* protocol-specific type */
++    size_t cmsg_len;    /* Data byte count, including header
++                           (type is socklen_t in POSIX) */
++    int    cmsg_level;  /* Originating protocol */
++    int    cmsg_type;   /* Protocol-specific type */
+ /* followed by
+     unsigned char cmsg_data[]; */
+ };
+diff --git a/man-pages/man3/cmsg.3 b/man-pages/man3/cmsg.3
+index 2713c09..8fe3d5d 100644
+--- a/man-pages/man3/cmsg.3
++++ b/man-pages/man3/cmsg.3
+@@ -28,10 +28,12 @@ CMSG_ALIGN, CMSG_SPACE, CMSG_NXTHDR, CMSG_FIRSTHDR \- access ancillary data
+ .sp
+ .nf
+ struct cmsghdr {
+-    socklen_t cmsg_len;    /* data byte count, including header */
+-    int       cmsg_level;  /* originating protocol */
+-    int       cmsg_type;   /* protocol-specific type */
+-    /* followed by unsigned char cmsg_data[]; */
++    size_t cmsg_len;    /* Data byte count, including header
++                           (type is socklen_t in POSIX) */
++    int    cmsg_level;  /* Originating protocol */
++    int    cmsg_type;   /* Protocol-specific type */
++/* followed by
++   unsigned char cmsg_data[]; */
+ };
+ .fi
+ .SH DESCRIPTION
+-- 
+2.7.4
+

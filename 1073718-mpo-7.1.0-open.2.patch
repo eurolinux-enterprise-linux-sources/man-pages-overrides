@@ -1,0 +1,47 @@
+From 4c8988667193cbd405eae05518425905db517626 Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Wed, 30 Jul 2014 17:35:04 +0200
+Subject: [PATCH] open.2
+
+---
+ man-pages/man2/open.2 | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/man-pages/man2/open.2 b/man-pages/man2/open.2
+index 84331c6..6b25e7b 100644
+--- a/man-pages/man2/open.2
++++ b/man-pages/man2/open.2
+@@ -875,10 +875,16 @@ for doing so, for example the
+ operation in
+ .BR xfsctl (3).
+ .LP
+-Under Linux 2.4, transfer sizes, and the alignment of the user buffer
+-and the file offset must all be multiples of the logical block size
+-of the file system.
+-Under Linux 2.6, alignment to 512-byte boundaries suffices.
++Under  Linux  2.4, transfer sizes, and the alignment of the user buffer
++and the file offset must all be multiples of the logical block size  of
++the filesystem.  Since Linux 2.6.0, alignment to the logical block size
++of the underlying storage (typically 512 bytes) suffices.  The  logical
++block  size can be determined using the ioctl(2) BLKSSZGET operation or
++from the shell using the command:
++
++.RS
++.BR    blockdev " " --getss
++.RE
+ .LP
+ .B O_DIRECT
+ I/Os should never be run concurrently with the
+@@ -1010,7 +1016,8 @@ to enable this flag.
+ .BR fopen (3),
+ .BR fifo (7),
+ .BR path_resolution (7),
+-.BR symlink (7)
++.BR symlink (7),
++.BR blockdev (8)
+ .SH COLOPHON
+ This page is part of release 3.53 of the Linux
+ .I man-pages
+-- 
+1.9.3
+

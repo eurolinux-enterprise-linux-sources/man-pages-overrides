@@ -1,0 +1,47 @@
+From e2f304ae4d80cca575c13d9fd2cdb48b664442db Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Tue, 30 Sep 2014 14:38:14 +0200
+Subject: [PATCH] proc.5 adding missing fields
+
+---
+ man-pages/man5/proc.5 | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/man-pages/man5/proc.5 b/man-pages/man5/proc.5
+index c6156f9..ae3bbf0 100644
+--- a/man-pages/man5/proc.5
++++ b/man-pages/man5/proc.5
+@@ -1242,6 +1242,30 @@ for a guest operating system), measured in clock ticks (divide by
+ \fIcguest_time\fP %ld (since Linux 2.6.24)
+ (44) Guest time of the process's children, measured in clock ticks (divide by
+ .IR sysconf(_SC_CLK_TCK) ).
++.TP
++\fIstart_data\fP %lu (since Linux 3.3)
++(45) Address above which program data+bss is placed.
++.TP
++\fIend_data\fP %lu (since Linux 3.3)
++(46) Address below which program data+bss is placed.
++.TP
++\fIstart_brk\fP %lu (since Linux 3.3)
++(47) Address above which program heap can be expanded with brk().
++.TP
++\fIarg_start\fP %lu (since Linux 3.5)
++(48) Address above which program command line is placed.
++.TP
++\fIarg_end\fP %lu (since Linux 3.5)
++(49) Address below which program command line is placed.
++.TP
++\fIenv_start\fP %lu (since Linux 3.5)
++(50) Address above which program environment is placed.
++.TP
++\fIenv_end\fP %lu (since Linux 3.5)
++(51) Address below which program environment is placed.
++.TP
++\fIexit_code\fP %d (since Linux 3.5)
++(52) The thread's exit_code in the form reported by the waitpid system.
+ .RE
+ .TP
+ .I /proc/[pid]/statm
+-- 
+1.9.3
+

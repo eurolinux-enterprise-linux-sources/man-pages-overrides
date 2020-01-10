@@ -1,0 +1,44 @@
+From cabfb553c7a039af44d976585266022c6210b7c4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Jun 2016 13:15:18 +0200
+Subject: [PATCH 07/19] recv.2: change description of flags argument to apply
+ also to recvfrom and recvmsg
+
+---
+ man-pages/man2/____recv.2 | 4 +---
+ man-pages/man2/recv.2     | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/man-pages/man2/____recv.2 b/man-pages/man2/____recv.2
+index 7b93c09..3ac8ef4 100644
+--- a/man-pages/man2/____recv.2
++++ b/man-pages/man2/____recv.2
+@@ -129,9 +129,7 @@ call may be used to determine when more data arrives.
+ .PP
+ The
+ .I flags
+-argument to a
+-.BR recv ()
+-call is formed by ORing one or more of the following values:
++argument is formed by ORing one or more of the following values:
+ .TP
+ .BR MSG_CMSG_CLOEXEC " (" recvmsg "() only; since Linux 2.6.23)"
+ Set the close-on-exec flag for the file descriptor received
+diff --git a/man-pages/man2/recv.2 b/man-pages/man2/recv.2
+index 7b93c09..3ac8ef4 100644
+--- a/man-pages/man2/recv.2
++++ b/man-pages/man2/recv.2
+@@ -129,9 +129,7 @@ call may be used to determine when more data arrives.
+ .PP
+ The
+ .I flags
+-argument to a
+-.BR recv ()
+-call is formed by ORing one or more of the following values:
++argument is formed by ORing one or more of the following values:
+ .TP
+ .BR MSG_CMSG_CLOEXEC " (" recvmsg "() only; since Linux 2.6.23)"
+ Set the close-on-exec flag for the file descriptor received
+-- 
+2.7.4
+

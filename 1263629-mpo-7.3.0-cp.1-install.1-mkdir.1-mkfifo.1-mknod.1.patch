@@ -1,0 +1,112 @@
+From 1700005f9f6c090e6f0e2cfab1ed7c2f9e7e5203 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Jun 2016 12:39:50 +0200
+Subject: [PATCH 05/17] cp.1, install.1, mkdir.1, mkfifo.1, mknod.1: update
+ security context options to reflect coreutils change
+
+---
+ man-pages-cs/cs/man1/cp.1      | 7 +++++++
+ man-pages-cs/cs/man1/install.1 | 7 ++++++-
+ man-pages-cs/cs/man1/mkdir.1   | 8 ++++++--
+ man-pages-cs/cs/man1/mkfifo.1  | 8 ++++++--
+ man-pages-cs/cs/man1/mknod.1   | 8 ++++++--
+ 5 files changed, 31 insertions(+), 7 deletions(-)
+
+diff --git a/man-pages-cs/cs/man1/cp.1 b/man-pages-cs/cs/man1/cp.1
+index 3ab7199..c6abe6d 100644
+--- a/man-pages-cs/cs/man1/cp.1
++++ b/man-pages-cs/cs/man1/cp.1
+@@ -105,6 +105,13 @@ vypisuje prováděné operace
+ nebude kopírovat podadresáře z jiného svazku než
+ na kterém kopírování začalo
+ .TP 
++\fB\-Z\fP
++nastaví cílovému souboru bezpečnostní kontext SELinuxu na výchozí
++.TP 
++\fB\-\-context\fP[=\fIKONTEXT\fP]
++jako \fB\-Z\fP; pokud je udán KONTEXT, nastaví
++bezpečnostní kontext SELinuxu nebo SMACKu na KONTEXT
++.TP 
+ \fB\-\-help\fP
+ vypíše tuto nápovědu a skončí
+ .TP 
+diff --git a/man-pages-cs/cs/man1/install.1 b/man-pages-cs/cs/man1/install.1
+index 2bf1d69..ea6a31d 100644
+--- a/man-pages-cs/cs/man1/install.1
++++ b/man-pages-cs/cs/man1/install.1
+@@ -76,8 +76,13 @@ vypisuje název každáho vytvářeného adresáře
+ \fB\-\-preserve\-context\fP
+ zachová bezpečnostní kontext SELinuxu
+ .TP 
+-\fB\-Z\fP, \fB\-\-context\fP=\fIKONTEXT\fP
++\fB\-Z\fP
+ nastaví souborům a adresářům bezpečnostní kontext SELinuxu
++na výchozí
++.TP 
++\fB\-\-context\fP[=\fIKONTEXT\fP]
++jako \fB\-Z\fP; pokud je udán KONTEXT, nastaví
++bezpečnostní kontext SELinuxu nebo SMACKu na KONTEXT
+ .TP 
+ \fB\-\-help\fP
+ vypíše tuto nápovědu a skončí
+diff --git a/man-pages-cs/cs/man1/mkdir.1 b/man-pages-cs/cs/man1/mkdir.1
+index 262adf9..9f38116 100644
+--- a/man-pages-cs/cs/man1/mkdir.1
++++ b/man-pages-cs/cs/man1/mkdir.1
+@@ -26,9 +26,13 @@ nadřazené adresáře
+ \fB\-v\fP, \fB\-\-verbose\fP
+ s každým vytvořeným adresářem vytiskne zprávu
+ .TP 
+-\fB\-Z\fP, \fB\-\-context\fP=\fIKONTEXT\fP
++\fB\-Z\fP
+ nastaví každému vytvořenému adresáři bezpečnostní kontext SELinuxu
+-na KONTEXT
++na výchozí
++.TP 
++\fB\-\-context\fP[=\fIKONTEXT\fP]
++jako \fB\-Z\fP; pokud je udán KONTEXT, nastaví
++bezpečnostní kontext SELinuxu nebo SMACKu na KONTEXT
+ .TP 
+ \fB\-\-help\fP
+ vypíše tuto nápovědu a skončí
+diff --git a/man-pages-cs/cs/man1/mkfifo.1 b/man-pages-cs/cs/man1/mkfifo.1
+index 4c92fd5..e83579c 100644
+--- a/man-pages-cs/cs/man1/mkfifo.1
++++ b/man-pages-cs/cs/man1/mkfifo.1
+@@ -19,8 +19,12 @@ Argumenty povinné pro dlouhé volby jsou pro krátké volby také povinné.
+ \fB\-m\fP, \fB\-\-mode\fP=\fIPRÁVA\fP
+ nastaví přístupová PRÁVA, namísto umask a=rw
+ .TP 
+-\fB\-Z\fP, \fB\-\-context\fP=\fIKONTEXT\fP
+-nastaví každému JMÉNU bezpečnostní kontext SELinuxu na KONTEXT
++\fB\-Z\fP
++nastaví každému JMÉNU bezpečnostní kontext SELinuxu na výchozí
++.TP 
++\fB\-\-context\fP[=\fIKONTEXT\fP]
++jako \fB\-Z\fP; pokud je udán KONTEXT, nastaví
++bezpečnostní kontext SELinuxu nebo SMACKu na KONTEXT
+ .TP 
+ \fB\-\-help\fP
+ vypíše tuto nápovědu a skončí
+diff --git a/man-pages-cs/cs/man1/mknod.1 b/man-pages-cs/cs/man1/mknod.1
+index dbde08f..8e27d8f 100644
+--- a/man-pages-cs/cs/man1/mknod.1
++++ b/man-pages-cs/cs/man1/mknod.1
+@@ -19,8 +19,12 @@ Argumenty povinné pro dlouhé volby jsou pro krátké volby také povinné.
+ \fB\-m\fP, \fB\-\-mode\fP=\fIPRÁVA\fP
+ nastaví přístupová PRÁVA, namísto umask a=rw
+ .TP 
+-\fB\-Z\fP, \fB\-\-context\fP=\fIKONTEXT\fP
+-nastaví JMÉNU bezpečnostní kontext SELinuxu na KONTEXT
++\fB\-Z\fP
++nastaví JMÉNU bezpečnostní kontext SELinuxu na výchozí
++.TP 
++\fB\-\-context\fP[=\fIKONTEXT\fP]
++jako \fB\-Z\fP; pokud je udán KONTEXT, nastaví
++bezpečnostní kontext SELinuxu nebo SMACKu na KONTEXT
+ .TP 
+ \fB\-\-help\fP
+ vypíše tuto nápovědu a skončí
+-- 
+2.7.4
+

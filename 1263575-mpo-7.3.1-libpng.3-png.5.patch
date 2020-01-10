@@ -1,0 +1,39 @@
+From 0fef929fe46265410a489ef1045295ceb21028e2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Jun 2016 12:11:10 +0200
+Subject: [PATCH 04/19] libpng.3, png.5: fix invalid RFC URL
+
+---
+ libpng/man3/libpng.3 | 2 +-
+ libpng/man5/png.5    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libpng/man3/libpng.3 b/libpng/man3/libpng.3
+index 6cfd7c6..cc081cd 100644
+--- a/libpng/man3/libpng.3
++++ b/libpng/man3/libpng.3
+@@ -5848,7 +5848,7 @@ ftp://ftp.info-zip.org/pub/infozip/zlib
+ .I libpng
+ or at
+ .br
+-ftp://ds.internic.net/rfc/rfc2083.txt
++ftp://ftp.rfc-editor.org:/in-notes/rfc2083.txt
+ .br
+ or (as a W3C Recommendation) at
+ .br
+diff --git a/libpng/man5/png.5 b/libpng/man5/png.5
+index 8898820..fa18342 100644
+--- a/libpng/man5/png.5
++++ b/libpng/man5/png.5
+@@ -35,7 +35,7 @@ PNG 1.0 specification, October 1996:
+ RFC 2083
+ .IP
+ .br
+-ftp://ds.internic.net/rfc/rfc2083.txt
++http://www.ietf.org/rfc/rfc2083.txt
+ .br
+ or (as a W3C Recommendation) at
+ .br
+-- 
+2.7.4
+

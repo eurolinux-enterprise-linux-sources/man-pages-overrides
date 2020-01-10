@@ -1,0 +1,219 @@
+From 7a536207483e677f1075e529cbd396dd649b2cdc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Wed, 3 Aug 2016 12:58:59 +0200
+Subject: [PATCH] prctl.2, capabilities.7: document ambient capabilities
+
+---
+ man-pages/man2/prctl.2        | 77 +++++++++++++++++++++++++++++++++++++++++++
+ man-pages/man7/capabilities.7 | 51 ++++++++++++++++++++++++----
+ 2 files changed, 122 insertions(+), 6 deletions(-)
+
+diff --git a/man-pages/man2/prctl.2 b/man-pages/man2/prctl.2
+index 92eecf9..cd6daef 100644
+--- a/man-pages/man2/prctl.2
++++ b/man-pages/man2/prctl.2
+@@ -844,6 +844,42 @@ had been called.
+ For further information on Intel MPX, see the kernel source file
+ .IR Documentation/x86/intel_mpx.txt .
+ .\"
++.TP
++.BR PR_CAP_AMBIENT " (since Linux 4.3)"
++.\" commit 58319057b7847667f0c9585b9de0e8932b0fdb08
++Reads or changes the ambient capability set, according to the value of
++.IR arg2 ,
++which must be one of the following:
++.RS
++.TP
++.B PR_CAP_AMBIENT_RAISE
++The capability specified in
++.I arg3
++is added to the ambient set.
++The specified capability must already be present in
++both the permitted and the inheritable sets of the process.
++This operation is not permitted if the
++.B SECBIT_NO_CAP_AMBIENT_RAISE
++securebit is set.
++.TP
++.B PR_CAP_AMBIENT_LOWER
++The capability specified in
++.I arg3
++is removed from the ambient set.
++.TP
++.B PR_CAP_AMBIENT_IS_SET
++The
++.BR prctl (2)
++call returns 1 if the capability in
++.I arg3
++is in the ambient set and 0 if it is not.
++.TP
++.BR PR_CAP_AMBIENT_CLEAR_ALL
++All capabilities will be removed from the ambient set.
++This operation requires setting
++.I arg3
++to zero.
++.RE
+ .SH RETURN VALUE
+ On success,
+ .BR PR_GET_DUMPABLE ,
+@@ -853,6 +889,7 @@ On success,
+ .BR PR_GET_TIMING ,
+ .BR PR_GET_SECUREBITS ,
+ .BR PR_MCE_KILL_GET ,
++.BR PR_CAP_AMBIENT + PR_CAP_AMBIENT_IS_SET ,
+ and (if it returns)
+ .BR PR_GET_SECCOMP
+ return the nonnegative values described above.
+@@ -949,6 +986,31 @@ is not 0,
+ .BR PR_SET_PTRACER_ANY ,
+ or the PID of an existing process.
+ .TP
++.B EINVAL
++.I option
++is
++.B PR_CAP_AMBIENT
++and an unused argument
++.RI ( arg4 ,
++.IR arg5 ,
++or, 
++in the case of
++.BR PR_CAP_AMBIENT_CLEAR_ALL ,
++.IR arg3 )
++is nonzero; or
++.IR arg2
++has an invalid value;
++or
++.IR arg2
++is
++.BR PR_CAP_AMBIENT_LOWER ,
++.BR PR_CAP_AMBIENT_RAISE ,
++or
++.BR PR_CAP_AMBIENT_IS_SET
++and
++.IR arg3
++does not specify a valid capability.
++.TP
+ .B EPERM
+ .I option
+ is
+@@ -1030,6 +1092,21 @@ capability.
+ .\" .BR PR_SET_SECCOMP ,
+ .\" and secure computing mode is already 1.
+ .TP
++.B EPERM
++.IR option
++is
++.BR PR_CAP_AMBIENT
++and
++.IR arg2
++is
++.BR PR_CAP_AMBIENT_RAISE ,
++but either the capability specified in
++.IR arg3
++is not present in the process's permitted and inheritable capability sets,
++or the
++.B PR_CAP_AMBIENT_LOWER
++securebit has been set.
++.TP
+ .B ENXIO
+ .I option
+ was
+diff --git a/man-pages/man7/capabilities.7 b/man-pages/man7/capabilities.7
+index 2c3377e..c340245 100644
+--- a/man-pages/man7/capabilities.7
++++ b/man-pages/man7/capabilities.7
+@@ -659,13 +659,40 @@ a program whose associated file capabilities grant that capability).
+ .IR Inheritable :
+ This is a set of capabilities preserved across an
+ .BR execve (2).
+-It provides a mechanism for a process to assign capabilities
+-to the permitted set of the new program during an
+-.BR execve (2).
++Inheritable capabilities remain inheritable when executing any program,
++and inheritable capabilities are added to the permitted set when executing
++a program that has the corresponding bits set in the file inheritable set.
++.IP
++Because inheritable capabilities are not generally preserved across
++.BR execve (2)
++when running as a non-root user, applications that wish to run helper
++programs with elevated capabilities should consider using
++ambient capabilities, described below.
+ .TP
+ .IR Effective :
+ This is the set of capabilities used by the kernel to
+ perform permission checks for the thread.
++.TP
++.IR Ambient " (since Linux 4.3):"
++.\" commit 58319057b7847667f0c9585b9de0e8932b0fdb08
++This is a set of capabilities that are preserved across an
++.BR execve (2)
++of a program that is not privileged.
++The ambient capability set obeys the invariant that no capability
++can ever be ambient if it is not both permitted and inheritable.
++
++The ambient capability set can be directly modified using
++.BR prctl (2).
++Ambient capabilities are automatically lowered if either of
++the corresponding permitted or inheritable capabilities is lowered.
++
++Executing a program that changes UID or GID due to the
++set-user-ID or set-group-ID bits or executing a program that has
++any file capabilities set will clear the ambient set.
++Ambient capabilities are added to the permitted set and
++assigned to the effective set when
++.BR execve (2)
++is called.
+ .PP
+ A child created via
+ .BR fork (2)
+@@ -747,10 +774,12 @@ the process using the following algorithm:
+ .in +4n
+ .nf
+ 
++P'(ambient) = (file is privileged) ? 0 : P(ambient)
++
+ P'(permitted) = (P(inheritable) & F(inheritable)) |
+-                (F(permitted) & cap_bset)
++                (F(permitted) & cap_bset) | P'(ambient)
+ 
+-P'(effective) = F(effective) ? P'(permitted) : 0
++P'(effective) = F(effective) ? P'(permitted) : P'(ambient)
+ 
+ P'(inheritable) = P(inheritable)    [i.e., unchanged]
+ 
+@@ -769,6 +798,9 @@ denotes a file capability set
+ .IP cap_bset
+ is the value of the capability bounding set (described below).
+ .RE
++.PP
++A privileged file is one that has capabilities or
++has the set-user-ID or set-group-ID bit set.
+ .\"
+ .SS Capabilities and execution of programs by root
+ In order to provide an all-powerful
+@@ -1029,6 +1061,12 @@ an effective or real UID of 0 calls
+ .BR execve (2).
+ (See the subsection
+ .IR "Capabilities and execution of programs by root" .)
++.TP
++.B SECBIT_NO_CAP_AMBIENT_RAISE
++Setting this flag disallows raising ambient capabilities via the
++.BR prctl (2)
++.BR PR_CAP_AMBIENT_RAISE
++operation.
+ .PP
+ Each of the above "base" flags has a companion "locked" flag.
+ Setting any of the "locked" flags is irreversible,
+@@ -1037,8 +1075,9 @@ corresponding "base" flag.
+ The locked flags are:
+ .BR SECBIT_KEEP_CAPS_LOCKED ,
+ .BR SECBIT_NO_SETUID_FIXUP_LOCKED ,
++.BR SECBIT_NOROOT_LOCKED ,
+ and
+-.BR SECBIT_NOROOT_LOCKED .
++.BR SECBIT_NO_CAP_AMBIENT_RAISE .
+ .PP
+ The
+ .I securebits
+-- 
+2.7.4
+

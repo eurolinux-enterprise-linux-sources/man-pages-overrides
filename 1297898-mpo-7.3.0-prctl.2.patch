@@ -1,0 +1,118 @@
+From 26057cba30205ed659094a2816557b439c651286 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Jun 2016 13:28:29 +0200
+Subject: [PATCH 11/17] prctl.2: add description of Intel MPX calls
+
+---
+ man-pages/man2/prctl.2 | 81 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+
+diff --git a/man-pages/man2/prctl.2 b/man-pages/man2/prctl.2
+index 24e56d2..92eecf9 100644
+--- a/man-pages/man2/prctl.2
++++ b/man-pages/man2/prctl.2
+@@ -47,6 +47,7 @@
+ .\"                             PR_GET_TIMERSLACK
+ .\" 2013-01-10 Kees Cook, document PR_SET_PTRACER
+ .\" 2012-02-04 Michael kerrisk, document PR_{SET,GET}_CHILD_SUBREAPER
++.\" 2014-11-10 Dave Hansen, document PR_MPX_{EN,DIS}ABLE_MANAGEMENT
+ .\"
+ .\"
+ .TH PRCTL 2 2013-05-21 "Linux" "Linux Programmer's Manual"
+@@ -771,6 +772,77 @@ option.
+ .\" symbolic-link transitions over all process running in a system.
+ .\" ========== END FIXME
+ .RE
++.TP
++.BR PR_MPX_ENABLE_MANAGEMENT ", " PR_MPX_DISABLE_MANAGEMENT " (since Linux 3.19) "
++.\" commit fe3d197f84319d3bce379a9c0dc17b1f48ad358c
++.\" See also http://lwn.net/Articles/582712/
++.\" See also https://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compiler
++Enable or disable kernel management of Memory Protection eXtensions (MPX)
++bounds tables.
++The
++.IR arg2 ,
++.IR arg3 ,
++.IR arg4 ,
++and
++.IR arg5
++.\" commit e9d1b4f3c60997fe197bf0243cb4a41a44387a88
++arguments must be zero.
++
++MPX is a hardware-assisted mechanism for performing bounds checking on
++pointers.
++It consists of a set of registers storing bounds information
++and a set of special instruction prefixes that tell the CPU on which
++instructions it should do bounds enforcement.
++There is a limited number of these registers and
++when there are more pointers than registers,
++their contents must be "spilled" into a set of tables.
++These tables are called "bounds tables" and the MPX
++.BR prctl ()
++operations control
++whether the kernel manages their allocation and freeing.
++
++When management is enabled, the kernel will take over allocation
++and freeing of the bounds tables.
++It does this by trapping the #BR exceptions that result
++at first use of missing bounds tables and
++instead of delivering the exception to user space,
++it allocates the table and populates the bounds directory
++with the location of the new table.
++For freeing, the kernel checks to see if bounds tables are
++present for memory which is not allocated, and frees them if so.
++
++Before enabling MPX management using
++.BR PR_MPX_ENABLE_MANAGEMENT ,
++the application must first have allocated a user-space buffer for
++the bounds directory and placed the location of that directory in the
++.I bndcfgu
++register.
++
++These calls will fail if the CPU or kernel does not support MPX.
++Kernel support for MPX is enabled via the
++.BR CONFIG_X86_INTEL_MPX
++configuration option.
++You can check whether the CPU supports MPX by looking for the 'mpx'
++CPUID bit, like with the following command:
++
++	cat /proc/cpuinfo | grep ' mpx '
++
++A thread may not switch in or out of long (64-bit) mode while MPX is
++enabled.
++
++All threads in a process are affected by these calls.
++
++The child of a
++.BR fork (2)
++inherits the state of MPX management.
++During
++.BR execve (2),
++MPX management is reset to a state as if
++.BR PR_MPX_DISABLE_MANAGEMENT
++had been called.
++
++For further information on Intel MPX, see the kernel source file
++.IR Documentation/x86/intel_mpx.txt .
+ .\"
+ .SH RETURN VALUE
+ On success,
+@@ -957,6 +1029,15 @@ capability.
+ .\" is
+ .\" .BR PR_SET_SECCOMP ,
+ .\" and secure computing mode is already 1.
++.TP
++.B ENXIO
++.I option
++was
++.BR PR_MPX_ENABLE_MANAGEMENT
++or
++.BR PR_MPX_DISABLE_MANAGEMENT
++and the kernel or the CPU does not support MPX management.
++Check that the kernel and processor have MPX support.
+ .SH VERSIONS
+ The
+ .BR prctl ()
+-- 
+2.7.4
+

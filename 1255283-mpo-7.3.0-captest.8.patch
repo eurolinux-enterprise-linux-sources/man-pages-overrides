@@ -1,0 +1,35 @@
+From 720dec93c72d9a493ee768e9d892c19d5485a19a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Jun 2016 11:32:03 +0200
+Subject: [PATCH 03/17] captest.8: describe --init-grp option
+
+---
+ libcap-ng/man8/captest.8 | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/libcap-ng/man8/captest.8 b/libcap-ng/man8/captest.8
+index b7a89f4..e6351a4 100644
+--- a/libcap-ng/man8/captest.8
++++ b/libcap-ng/man8/captest.8
+@@ -2,7 +2,7 @@
+ .SH NAME
+ captest \- a program to demonstrate capabilities
+ .SH SYNOPSIS
+-.B captest [ \-\-drop-all | \-\-drop-caps | \-\-id ] [ \-\-lock ] [ \-\-text ]
++.B captest [ \-\-drop-all | \-\-drop-caps | \-\-id ] [ \-\-init-grp ] [ \-\-lock ] [ \-\-text ]
+ .SH DESCRIPTION
+ \fBcaptest\fP is a program that demonstrates and prints out the current process capabilities. Each option prints the same report. It will output current capabilities. then it will try to access /etc/shadow directly to show if that can be done. Then it creates a child process that attempts to read /etc/shadow and outputs the results of that. Then it outputs the capabilities that a child process would have.
+ 
+@@ -19,6 +19,9 @@ This drops just traditional capabilities.
+ .B \-\-id
+ This changes to uid and gid 99, drops supplemental groups, and clears the bounding set.
+ .TP
++.B \-\-init-grp
++This changes to uid and gid 99 and then adds any supplemental groups that comes with that account. You would have add them prior to testing because by default there are no supplemental groups on account 99.
++.TP
+ .B \-\-text
+ This option outputs the effective capabilities in text rather than numerically.
+ .TP
+-- 
+2.7.4
+

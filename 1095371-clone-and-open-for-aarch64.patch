@@ -1,0 +1,60 @@
+From f08174d07173579bd1597779c344b6b8e8445621 Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Thu, 16 Oct 2014 14:27:29 +0200
+Subject: [PATCH] clone and open for aarch64
+
+---
+ man-pages/man2/____clone.2 | 17 +++++++++++++++++
+ man-pages/man2/____open.2  |  8 ++++++++
+ 2 files changed, 25 insertions(+)
+
+diff --git a/man-pages/man2/____clone.2 b/man-pages/man2/____clone.2
+index 1baad11..96e5006 100644
+--- a/man-pages/man2/____clone.2
++++ b/man-pages/man2/____clone.2
+@@ -1024,6 +1024,23 @@ On i386,
+ .BR clone ()
+ should not be called through vsyscall, but directly through
+ .IR "int $0x80" .
++
++.BR clone()
++replaces
++.BR fork(2)
++and
++.BR vfork(2)
++system calls.
++A call to
++.BR fork()
++is equivalent to a call to
++.BR clone()
++specifying flags as just SIGCHLD.
++A call to
++.BR vfork()
++is equivalent to calling
++.BR clone()
++with flags specified as: CLONE_VM | CLONE_VFORK | SIGCHLD
+ .SH BUGS
+ Versions of the GNU C library that include the NPTL threading library
+ contain a wrapper function for
+diff --git a/man-pages/man2/____open.2 b/man-pages/man2/____open.2
+index 84331c6..f298e34 100644
+--- a/man-pages/man2/____open.2
++++ b/man-pages/man2/____open.2
+@@ -63,6 +63,14 @@ open, creat \- open and possibly create a file or device
+ .BI "int creat(const char *" pathname ", mode_t " mode );
+ .fi
+ .SH DESCRIPTION
++.BR open(2)
++and
++.BR creat(2)
++system calls are DEPRECATED, use
++.BR openat(2)
++instead!!! This man page is only a reference for
++.BR openat(2).
++.LP
+ Given a
+ .I pathname
+ for a file,
+-- 
+1.9.3
+

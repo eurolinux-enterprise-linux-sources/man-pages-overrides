@@ -1,0 +1,112 @@
+From 82a40d2b088b5207ecb8f8861ebd4babfd10385a Mon Sep 17 00:00:00 2001
+From: Jan Chaloupka <jchaloup@redhat.com>
+Date: Mon, 27 Oct 2014 13:02:32 +0100
+Subject: [PATCH] madvise.2 MADV_REMOVE supports more filesystems
+
+---
+ man-pages/en/man2/madvise.2 | 20 ++++++++++++++------
+ man-pages/man2/fallocate.2  | 11 +++++++++++
+ man-pages/man2/madvise.2    | 20 ++++++++++++++------
+ 3 files changed, 39 insertions(+), 12 deletions(-)
+
+diff --git a/man-pages/en/man2/madvise.2 b/man-pages/en/man2/madvise.2
+index 4e693da..460726a 100644
+--- a/man-pages/en/man2/madvise.2
++++ b/man-pages/en/man2/madvise.2
+@@ -101,11 +101,18 @@ without an underlying file.
+ .BR MADV_REMOVE " (Since Linux 2.6.16)"
+ Free up a given range of pages
+ and its associated backing store.
+-Currently,
+-.\" 2.6.18-rc5
+-only shmfs/tmpfs supports this; other file systems return with the
+-error
+-.BR ENOSYS .
++Originally, only shmfs/tmpfs supported this; but since Linux 3.5,
++any filesystem which supports the
++.BR fallocate(2)
++mode
++.BR FALLOC_FL_PUNCH_HOLE
++also supports the
++.BR madvise(2)
++advice
++.BR MADV_REMOVE .
++Other filesystems return with the
++.BR EOPNOTSUPP
++error.
+ .\" Databases want to use this feature to drop a section of their
+ .\" bufferpool (shared memory segments) - without writing back to
+ .\" disk/swap space.  This feature is also useful for supporting
+@@ -375,7 +382,8 @@ from the system call, as it should).
+ .BR mprotect (2),
+ .BR msync (2),
+ .BR munmap (2),
+-.BR core (5)
++.BR core (5),
++.BR fallocate (2)
+ .SH COLOPHON
+ This page is part of release 3.53 of the Linux
+ .I man-pages
+diff --git a/man-pages/man2/fallocate.2 b/man-pages/man2/fallocate.2
+index be9dbcd..4e68a3f 100644
+--- a/man-pages/man2/fallocate.2
++++ b/man-pages/man2/fallocate.2
+@@ -109,6 +109,17 @@ does not change.
+ Not all file systems support
+ .BR FALLOC_FL_PUNCH_HOLE ;
+ if a file system doesn't support the operation, an error is returned.
++The operation is supported on at least the following filesystems:
++.IP * 3
++XFS (since Linux 2.6.38)
++.IP *
++ext4 (since Linux 3.0)
++.\" commit a4bb6b64e39abc0e41ca077725f2a72c868e7622
++.IP *
++Btrfs (since Linux 3.7)
++.IP *
++tmpfs (since Linux 3.5)
++.\" commit 83e4fa9c16e4af7122e31be3eca5d57881d236fe
+ .SH RETURN VALUE
+ On success,
+ .BR fallocate ()
+diff --git a/man-pages/man2/madvise.2 b/man-pages/man2/madvise.2
+index 4e693da..460726a 100644
+--- a/man-pages/man2/madvise.2
++++ b/man-pages/man2/madvise.2
+@@ -101,11 +101,18 @@ without an underlying file.
+ .BR MADV_REMOVE " (Since Linux 2.6.16)"
+ Free up a given range of pages
+ and its associated backing store.
+-Currently,
+-.\" 2.6.18-rc5
+-only shmfs/tmpfs supports this; other file systems return with the
+-error
+-.BR ENOSYS .
++Originally, only shmfs/tmpfs supported this; but since Linux 3.5,
++any filesystem which supports the
++.BR fallocate(2)
++mode
++.BR FALLOC_FL_PUNCH_HOLE
++also supports the
++.BR madvise(2)
++advice
++.BR MADV_REMOVE .
++Other filesystems return with the
++.BR EOPNOTSUPP
++error.
+ .\" Databases want to use this feature to drop a section of their
+ .\" bufferpool (shared memory segments) - without writing back to
+ .\" disk/swap space.  This feature is also useful for supporting
+@@ -375,7 +382,8 @@ from the system call, as it should).
+ .BR mprotect (2),
+ .BR msync (2),
+ .BR munmap (2),
+-.BR core (5)
++.BR core (5),
++.BR fallocate (2)
+ .SH COLOPHON
+ This page is part of release 3.53 of the Linux
+ .I man-pages
+-- 
+1.9.3
+
