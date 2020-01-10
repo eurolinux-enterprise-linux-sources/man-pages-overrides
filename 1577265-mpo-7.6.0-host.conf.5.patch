@@ -1,0 +1,107 @@
+From 9ad552df64b1de224e452d7d788f3b3473dbf945 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 19 Jun 2018 14:00:17 +0200
+Subject: [PATCH] host.conf.5: remove description of never-implemented spoof
+ options
+---
+ man-pages/man5/host.conf.5 | 63 +-------------------------------------
+ 1 file changed, 1 insertion(+), 62 deletions(-)
+
+diff --git a/man-pages/man5/host.conf.5 b/man-pages/man5/host.conf.5
+index c85fefe..3f24518 100644
+--- a/man-pages/man5/host.conf.5
++++ b/man-pages/man5/host.conf.5
+@@ -33,7 +33,7 @@ contains configuration information specific to the resolver library.
+ It should contain one configuration keyword per line, followed by
+ appropriate configuration information.
+ The keywords recognized are
+-.IR trim ", " multi ", " nospoof ", " spoof ", and " reorder .
++.IR trim ", " multi ", and " reorder .
+ These keywords are described below.
+ .TP
+ .I trim
+@@ -68,52 +68,6 @@ This is
+ by default, as it may cause a substantial performance loss at sites
+ with large hosts files.
+ .TP
+-.I nospoof
+-Valid values are
+-.IR on " and " off .
+-If set to
+-.IR on ,
+-the resolv+ library will attempt to prevent hostname spoofing to
+-enhance the security of
+-.BR rlogin " and " rsh .
+-It works as follows: after performing a host address lookup, resolv+
+-will perform a hostname lookup for that address.
+-If the two hostnames
+-do not match, the query will fail.
+-The default value is
+-.IR off .
+-.TP
+-.I spoofalert
+-Valid values are
+-.IR on " and " off .
+-If this option is set to
+-.I on
+-and the
+-.I nospoof
+-option is also set, resolv+ will log a warning of the error via the
+-syslog facility.
+-The default value is
+-.IR off .
+-.TP
+-.I spoof
+-Valid values are
+-.IR off ", " nowarn " and " warn .
+-If this option is set to
+-.IR off ,
+-spoofed addresses are permitted and no warnings will be emitted
+-via the syslog facility.
+-If this option is set to
+-.IR warn ,
+-resolv+ will attempt to prevent hostname spoofing to
+-enhance the security and log a warning of the error via the syslog
+-facility.
+-If this option is set to
+-.IR nowarn ,
+-the resolv+ library will attempt to prevent hostname spoofing to
+-enhance the security but not emit warnings via the syslog facility.
+-Setting this option to anything else is equal to setting it to
+-.IR nowarn .
+-.TP
+ .I reorder
+ Valid values are
+ .IR on " and " off .
+@@ -135,15 +89,6 @@ override the behavior which is configured in
+ If set this variable points to a file that should be read instead of
+ .IR /etc/host.conf .
+ .TP
+-.B RESOLV_SPOOF_CHECK
+-Overrides the
+-.IR nospoof ", " spoofalert " and " spoof
+-commands in the same way as the
+-.I spoof
+-command is parsed.
+-Valid values are
+-.IR off ", " nowarn " and " warn .
+-.TP
+ .B RESOLV_MULTI
+ Overrides the
+ .I multi
+@@ -178,12 +123,6 @@ Resolver configuration file
+ Local hosts database
+ .SH NOTES
+ The following differences exist compared to the original implementation.
+-A new command
+-.I spoof
+-and a new environment variable
+-.B RESOLV_SPOOF_CHECK
+-can take arguments like
+-.IR off ", " nowarn " and " warn .
+ Line comments can appear anywhere and not only at the beginning of a line.
+ .SH SEE ALSO
+ .BR gethostbyname (3),
+-- 
+2.17.1
+

@@ -2,7 +2,7 @@
 
 Summary: Complementary and updated manual pages
 Name: man-pages-overrides
-Version: 7.5.2
+Version: 7.6.2
 Release: 1%{?dist}
 # license is the same as for the man-pages package
 License: GPL+ and GPLv2+ and BSD and MIT and Copyright only and IEEE
@@ -13,7 +13,7 @@ Source: man-pages-overrides-%{version}.tar.xz
 Patch0: 1073718-mpo-7.1.0-open.2.patch
 Patch1: 1086994-mpo-7.1.0-proc.5.patch
 Patch2: 1112307-mpo-7.3.0-cciss.4.patch
-Patch3: 1021967-mpo-7.1.0-socat.1.patch
+Patch3: 1619272-mpo-7.6.2-perf_event_open.2.patch
 Patch4: 1131853-mpo-7.1.0-proc.5-proc-fs-not-empty.patch
 Patch5: 1085531-mpo-7.4.0-ipvsadm.8.patch
 Patch6: 1255283-mpo-7.3.0-captest.8.patch
@@ -51,12 +51,17 @@ Patch35: 1360898-mpo-7.3.2-prctl.2-capabilities.7.patch
 Patch36: 1390935-mpo-7.4.0-nsswitch.conf.5.patch
 Patch37: 1404478-mpo-7.4.0-packet.7.patch
 Patch38: 1452368-mpo-7.4.2-clone.2.patch
-Patch39: 1439724-mpo-7.5.0-vsftpd.conf.5.patch
+Patch39: 1560191-mpo-7.6.0-madvise.2.patch
 Patch40: 1488506-mpo-7.5.0-imtest.1.patch
-Patch41: 1507143-mpo-7.5.0-vsftpd.conf.5.patch
-Patch42: 1517216-mpo-7.5.0-vsftpd.conf.5.patch
+Patch41: 1573281-mpo-7.6.0-mlock.2-mlock2.2.patch
+Patch42: 1577265-mpo-7.6.0-host.conf.5.patch
 Patch43: 1437003-mpo-7.5.1-aide.1-aide.conf.5.patch
 Patch44: 1422950-mpo-7.5.2-recvmmsg.2-sendmmsg.2.patch
+Patch45: 1495572-mpo-7.6.0-mount.cifs.8.patch
+Patch46: 1538499-mpo-7.6.0-iproute.8.patch
+Patch47: 1543420-mpo-7.6.0-tc-vlan.8.patch
+Patch48: 1598288-mpo-7.6.2-resolv.conf.5.patch
+Patch49: 1607318-mpo-7.6.2-proc.5.patch
 
 %description
 A collection of manual ("man") pages to complement other packages or update
@@ -65,6 +70,8 @@ installed.
 
 %prep
 %autosetup -p1
+# remove unwanted *.orig files
+find -name "*.orig" -delete
 
 %build
 %ifarch aarch64
@@ -113,6 +120,55 @@ done
 %{_mandir}/overrides/
 
 %changelog
+* Wed Aug 22 2018 Nikola Forró <nforro@redhat.com> - 7.6.2-1
+- Upload new tarball
+  related: #1592800
+- remove bug fixed in original component: #1147562 (socat)
+- perf_event_open.2: sync with upstream
+  resolves: #1619272
+- resolv.conf.5: document no-reload (RES_NORELOAD) option
+  resolves: #1598288
+- proc.5: document missing fields in /proc/[pid]/smaps and /proc/[pid]/status
+  resolves: #1607318
+
+* Fri Aug 17 2018 Nikola Forró <nforro@redhat.com> - 7.6.1-4
+- patch also localized madvise.2 man page
+  related: #1560191
+
+* Mon Aug 13 2018 Nikola Forró <nforro@redhat.com> - 7.6.1-3
+- remove spoof options also from description section of host.conf.5
+  related: #1577265
+
+* Mon Jul 09 2018 Nikola Forró <nforro@redhat.com> - 7.6.1-2
+- remove unwanted (*.orig) files
+  related: #1278492, #1560191, #1577265
+
+* Wed Jul 04 2018 Nikola Forró <nforro@redhat.com> - 7.6.1-1
+- Upload new tarball
+- move mlock2.2 to a proper directory
+  related: #1573281
+
+* Tue Jun 19 2018 Nikola Forró <nforro@redhat.com> - 7.6.0-1
+- Upload new tarball
+  resolves: #1592800
+- remove bug fixed in original component: #1508021 (vsftpd)
+- remove bug fixed in original component: #1508022 (vsftpd)
+- remove bug fixed in original component: #1517227 (vsftpd)
+- madvise.2: document MADV_WIPEONFORK and MADV_KEEPONFORK
+  resolves: #1560191
+- mlock.2, mlock2.2: document mlock2(2) and MCL_ONFAULT
+  resolves: #1573281
+- host.conf.5: remove description of never-implemented spoof options
+  resolves: #1577265
+- membarrier.2: add new man page
+  resolves: #1566315
+- mount.cifs.8: describe seal option
+  resolves: #1495572
+- ip-route.8: fix synopsis of ssthresh parameter
+  resolves: #1538499
+- tc-vlan.8: fix incorrect example
+  resolves: #1543420
+
 * Wed Jan 10 2018 Nikola Forró <nforro@redhat.com> - 7.5.2-1
 - Upload new tarball
 - remove obsolete patch

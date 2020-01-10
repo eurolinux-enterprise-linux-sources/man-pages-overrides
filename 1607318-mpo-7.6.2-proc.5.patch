@@ -1,0 +1,301 @@
+From cfd0231bfc49d6f040f9ec90243ae35e1af216d0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Wed, 22 Aug 2018 12:35:44 +0200
+Subject: [PATCH 2/2] proc.5: document missing fields in /proc/[pid]/smaps and
+ /proc/[pid]/status
+
+---
+ man-pages/man5/proc.5 | 198 +++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 168 insertions(+), 30 deletions(-)
+
+diff --git a/man-pages/man5/proc.5 b/man-pages/man5/proc.5
+index e4d2fd7..fa8505d 100644
+--- a/man-pages/man5/proc.5
++++ b/man-pages/man5/proc.5
+@@ -961,28 +961,93 @@ For each of mappings there is a series of lines such as the following:
+ .in +4n
+ .nf
+ 
+-08048000-080bc000 r-xp 00000000 03:02 13130      /bin/bash
+-Size:               464 kB
+-Rss:                424 kB
+-Shared_Clean:       424 kB
+-Shared_Dirty:         0 kB
+-Private_Clean:        0 kB
+-Private_Dirty:        0 kB
++00400000\-0048a000 r\-xp 00000000 fd:03 960637       /bin/bash
++Size:                552 kB
++Rss:                 460 kB
++Pss:                 100 kB
++Shared_Clean:        452 kB
++Shared_Dirty:          0 kB
++Private_Clean:         8 kB
++Private_Dirty:         0 kB
++Referenced:          460 kB
++Anonymous:             0 kB
++AnonHugePages:         0 kB
++Swap:                  0 kB
++KernelPageSize:        4 kB
++MMUPageSize:           4 kB
++KernelPageSize:        4 kB
++MMUPageSize:           4 kB
++Locked:                0 kB
++VmFlags: rd ex mr mw me dw
+ 
+ .fi
+ .in
+ The first of these lines shows the same information as is displayed
+ for the mapping in
+ .IR /proc/[pid]/maps .
+-The remaining lines show the size of the mapping,
+-the amount of the mapping that is currently resident in RAM,
++The following lines show the size of the mapping,
++the amount of the mapping that is currently resident in RAM ("Rss"),
++the process's proportional share of this mapping ("Pss"),
+ the number of clean and dirty shared pages in the mapping,
+ and the number of clean and dirty private pages in the mapping.
+-
+-This file is present only if the
+-.B CONFIG_MMU
+-kernel configuration
+-option is enabled.
++"Referenced" indicates the amount of memory currently marked as
++referenced or accessed.
++"Anonymous" shows the amount of memory
++that does not belong to any file.
++"Swap" shows how much
++would-be-anonymous memory is also used, but out on swap.
++.IP
++The "KernelPageSize" line (available since Linux 2.6.29)
++is the page size used by the kernel to back the virtual memory area.
++This matches the size used by the MMU in the majority of cases.
++However, one counter-example occurs on PPC64 kernels
++whereby a kernel using 64kB as a base page size may still use 4kB
++pages for the MMU on older processors.
++To distinguish the two attributes, the "MMUPageSize" line
++(also available since Linux 2.6.29)
++reports the page size used by the MMU.
++.IP
++The "Locked" indicates whether the mapping is locked in memory
++or not.
++.IP
++The "VmFlags" line (available since Linux 3.8)
++represents the kernel flags associated with the virtual memory area,
++encoded using the following two-letter codes:
++.IP
++    rd  - readable
++    wr  - writable
++    ex  - executable
++    sh  - shared
++    mr  - may read
++    mw  - may write
++    me  - may execute
++    ms  - may share
++    gd  - stack segment grows down
++    pf  - pure PFN range
++    dw  - disabled write to the mapped file
++    lo  - pages are locked in memory
++    io  - memory mapped I/O area
++    sr  - sequential read advise provided
++    rr  - random read advise provided
++    dc  - do not copy area on fork
++    de  - do not expand area on remapping
++    ac  - area is accountable
++    nr  - swap space is not reserved for the area
++    ht  - area uses huge tlb pages
++    nl  - non-linear mapping
++    ar  - architecture specific flag
++    dd  - do not include area into core dump
++    sd  - soft-dirty flag
++    mm  - mixed map area
++    hg  - huge page advise flag
++    nh  - no-huge page advise flag
++    mg  - mergeable advise flag
++.IP
++The
++.IR /proc/[pid]/smaps
++file is present only if the
++.B CONFIG_PROC_PAGE_MONITOR
++kernel configuration option is enabled.
+ .TP
+ .I /proc/[pid]/stat
+ Status information about the process.
+@@ -1300,25 +1365,31 @@ Here's an example:
+ 
+ .RB "$" " cat /proc/$$/status"
+ Name:   bash
++Umask:  0022
+ State:  S (sleeping)
+-Tgid:   3515
+-Pid:    3515
+-PPid:   3452
++Tgid:   17248
++Ngid:   0
++Pid:    17248
++PPid:   17200
+ TracerPid:      0
+ Uid:    1000    1000    1000    1000
+ Gid:    100     100     100     100
+ FDSize: 256
+ Groups: 16 33 100
+-VmPeak:     9136 kB
+-VmSize:     7896 kB
++VmPeak:   131168 kB
++VmSize:   131168 kB
+ VmLck:         0 kB
+-VmHWM:      7572 kB
+-VmRSS:      6316 kB
+-VmData:     5224 kB
+-VmStk:        88 kB
+-VmExe:       572 kB
+-VmLib:      1708 kB
+-VmPTE:        20 kB
++VmPin:         0 kB
++VmHWM:     13484 kB
++VmRSS:     13484 kB
++RssAnon:       10264 kB
++RssFile:        3220 kB
++RssShmem:          0 kB
++VmData:    10332 kB
++VmStk:       136 kB
++VmExe:       992 kB
++VmLib:      2104 kB
++VmPTE:        76 kB
+ Threads:        1
+ SigQ:   0/3067
+ SigPnd: 0000000000000000
+@@ -1330,6 +1401,9 @@ CapInh: 0000000000000000
+ CapPrm: 0000000000000000
+ CapEff: 0000000000000000
+ CapBnd: ffffffffffffffff
++CapAmb: 0000000000000000
++Seccomp:        0
++Speculation_Store_Bypass:       vulnerable
+ Cpus_allowed:   00000001
+ Cpus_allowed_list:      0
+ Mems_allowed:   1
+@@ -1345,6 +1419,11 @@ The fields are as follows:
+ .IR Name :
+ Command run by this process.
+ .IP *
++.IR Umask :
++Process umask, expressed in octal with a leading zero; see
++.BR umask (2).
++(Since Linux 4.7.)
++.IP *
+ .IR State :
+ Current state of the process.
+ One of
+@@ -1360,6 +1439,9 @@ or
+ .IR Tgid :
+ Thread group ID (i.e., Process ID).
+ .IP *
++.IR Ngid :
++NUMA group ID (0 if none; since Linux 3.13).
++.IP *
+ .IR Pid :
+ Thread ID (see
+ .BR gettid (2)).
+@@ -1371,7 +1453,7 @@ PID of parent process.
+ PID of process tracing this process (0 if not being traced).
+ .IP *
+ .IR Uid ", " Gid :
+-Real, effective, saved set, and file system UIDs (GIDs).
++Real, effective, saved set, and filesystem UIDs (GIDs).
+ .IP *
+ .IR FDSize :
+ Number of file descriptor slots currently allocated.
+@@ -1387,13 +1469,43 @@ Virtual memory size.
+ .IP *
+ .IR VmLck :
+ Locked memory size (see
+-.BR mlock (3)).
++.BR mlock (2)).
++.IP *
++.IR VmPin :
++Pinned memory size
++.\" commit bc3e53f682d93df677dbd5006a404722b3adfe18
++(since Linux 3.2).
++These are pages that can't be moved because something needs to
++directly access physical memory.
+ .IP *
+ .IR VmHWM :
+ Peak resident set size ("high water mark").
+ .IP *
+ .IR VmRSS :
+ Resident set size.
++Note that the value here is the sum of
++.IR RssAnon ,
++.IR RssFile ,
++and
++.IR RssShmem .
++.IP *
++.IR RssAnon :
++Size of resident anonymous memory.
++.\" commit bf9683d6990589390b5178dafe8fd06808869293
++(since Linux 4.5).
++.IP *
++.IR RssFile :
++Size of resident file mappings.
++.\" commit bf9683d6990589390b5178dafe8fd06808869293
++(since Linux 4.5).
++.IP *
++.IR RssShmem :
++Size of resident shared memory (includes System V shared memory,
++mappings from
++.BR tmpfs (5),
++and shared anonymous mappings).
++.\" commit bf9683d6990589390b5178dafe8fd06808869293
++(since Linux 4.5).
+ .IP *
+ .IR VmData ", " VmStk ", " VmExe :
+ Size of data, stack, and text segments.
+@@ -1435,9 +1547,35 @@ Masks of capabilities enabled in inheritable, permitted, and effective sets
+ .IP *
+ .IR CapBnd :
+ Capability Bounding set
+-(since kernel 2.6.26, see
++(since Linux 2.6.26, see
++.BR capabilities (7)).
++.IP *
++.IR CapAmb :
++Ambient capability set
++(since Linux 4.3, see
+ .BR capabilities (7)).
+ .IP *
++.IR Seccomp :
++.\" commit 2f4b3bf6b2318cfaa177ec5a802f4d8d6afbd816
++Seccomp mode of the process
++(since Linux 3.8, see
++.BR seccomp (2)).
++0 means
++.BR SECCOMP_MODE_DISABLED ;
++1 means
++.BR SECCOMP_MODE_STRICT ;
++2 means
++.BR SECCOMP_MODE_FILTER .
++This field is provided only if the kernel was built with the
++.BR CONFIG_SECCOMP
++kernel configuration option enabled.
++.IP *
++.IR Speculation_Store_Bypass :
++.\" commit fae1fa0fc6cca8beee3ab8ed71d54f9a78fa3f64
++Speculation flaw mitigation state
++(since Linux 4.17, see
++.BR prctl (2)).
++.IP *
+ .IR Cpus_allowed :
+ Mask of CPUs on which this process may run
+ (since Linux 2.6.24, see
+@@ -1458,7 +1596,7 @@ Same as previous, but in "list format"
+ (since Linux 2.6.26, see
+ .BR cpuset (7)).
+ .IP *
+-.IR voluntary_context_switches ", " nonvoluntary_context_switches :
++.IR voluntary_ctxt_switches ", " nonvoluntary_ctxt_switches :
+ Number of voluntary and involuntary context switches (since Linux 2.6.23).
+ .RE
+ .TP
+-- 
+2.17.1
+

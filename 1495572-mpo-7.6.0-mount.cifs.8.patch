@@ -1,0 +1,28 @@
+From 785c2a1e47ce8fa251f9355ca760412b22784d28 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Wed, 20 Jun 2018 11:11:09 +0200
+Subject: [PATCH] mount.cifs.8: describe seal option
+---
+ cifs-utils/man8/mount.cifs.8 | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/cifs-utils/man8/mount.cifs.8 b/cifs-utils/man8/mount.cifs.8
+index 01579f6..2a751ab 100644
+--- a/cifs-utils/man8/mount.cifs.8
++++ b/cifs-utils/man8/mount.cifs.8
+@@ -440,6 +440,12 @@ The default in mainline kernel versions prior to v3.8 was sec=ntlm. In v3.8, the
+ If the server requires signing during protocol negotiation, then it may be enabled automatically. Packet signing may also be enabled automatically if it's enabled in /proc/fs/cifs/SecurityFlags.
+ .RE
+ .PP
++seal
++.RS 4
++Request encryption at the SMB layer. Encryption is only supported in
++SMBv3 and above. The encryption algorithm used is AES\-128\-CCM.
++.RE
++.PP
+ nobrl
+ .RS 4
+ Do not send byte range lock requests to the server\&. This is necessary for certain applications that break with cifs style mandatory byte range locks (and most cifs servers do not yet support requesting advisory byte range locks)\&.
+-- 
+2.17.1
+
