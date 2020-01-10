@@ -1,0 +1,27 @@
+From 951e2f3e3ce2b568dae770397039f9d728d2a3ba Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Wed, 1 Nov 2017 13:27:22 +0100
+Subject: [PATCH 1/4] cups-browsed.8: fix paths to AUTHORS and README
+
+---
+ cups-filters/man8/cups-browsed.8 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cups-filters/man8/cups-browsed.8 b/cups-filters/man8/cups-browsed.8
+index cbf59f9..4768a74 100644
+--- a/cups-filters/man8/cups-browsed.8
++++ b/cups-filters/man8/cups-browsed.8
+@@ -49,8 +49,8 @@ and command line tools.
+ 
+ \fBcups-browsed.conf\fP(5)
+ .PP
+-/usr/share/doc/\fBcups-filters\fP/README
++/usr/share/doc/cups-filters-1.0.35/README
+ .SH AUTHOR
+-The authors of \fBcups-browsed\fP are listed in /usr/share/doc/\fBcups-filters\fP/AUTHORS.
++The authors of \fBcups-browsed\fP are listed in /usr/share/doc/cups-filters-1.0.35/AUTHORS.
+ .PP
+ This manual page was written for the Debian Project, but it may be used by others.
+-- 
+2.13.6
+

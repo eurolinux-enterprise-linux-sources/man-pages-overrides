@@ -1,0 +1,69 @@
+From 8866991164690817cc1e3489b6f7aa615170935d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Wed, 10 Jan 2018 11:38:35 +0100
+Subject: [PATCH] recvmmsg.2, sendmmsg.2: point out that error handling is
+ unreliable
+
+---
+ man-pages/man2/recvmmsg.2 | 10 ++++++++++
+ man-pages/man2/sendmmsg.2 |  9 +++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/man-pages/man2/recvmmsg.2 b/man-pages/man2/recvmmsg.2
+index 4c00ebe..7fc4d5a 100644
+--- a/man-pages/man2/recvmmsg.2
++++ b/man-pages/man2/recvmmsg.2
+@@ -162,6 +162,8 @@ In addition, the following error can occur:
+ .B EINVAL
+ .I timeout
+ is invalid.
++.PP
++See also BUGS.
+ .SH VERSIONS
+ The
+ .BR recvmmsg ()
+@@ -170,6 +172,14 @@ Support in glibc was added in version 2.12.
+ .SH CONFORMING TO
+ .BR recvmmsg ()
+ is Linux-specific.
++.SH BUGS
++If an error occurs after at least one message has been received,
++the call succeeds, and returns the number of messages received.
++The error code is expected to be returned on a subsequent call to
++.BR recvmmsq ().
++In the current implementation, however, the error code can be overwritten
++in the meantime by an unrelated network event on a socket,
++for example an incoming ICMP packet.
+ .SH EXAMPLE
+ .PP
+ The following program uses
+diff --git a/man-pages/man2/sendmmsg.2 b/man-pages/man2/sendmmsg.2
+index a646524..939ee3c 100644
+--- a/man-pages/man2/sendmmsg.2
++++ b/man-pages/man2/sendmmsg.2
+@@ -134,6 +134,7 @@ is set to indicate the error.
+ Errors are as for
+ .BR sendmsg (2).
+ An error is returned only if no datagrams could be sent.
++See also BUGS.
+ .\" commit 728ffb86f10873aaf4abd26dde691ee40ae731fe
+ .\"     ... only return an error if no datagrams could be sent.
+ .\"     If less than the requested number of messages were sent, the application
+@@ -165,6 +166,14 @@ is capped to
+ .\"     For error handling an application using sendmmsg needs to retry at
+ .\"     the first unsent message, so capping is simpler and requires less
+ .\"     application logic than returning EINVAL.
++.SH BUGS
++If an error occurs after at least one message has been sent,
++the call succeeds, and returns the number of messages sent.
++The error code is lost.
++The caller can retry the transmission,
++starting at the first failed message, but there is no guarantee that,
++if an error is returned, it will be the same as the one that was lost
++on the previous call.
+ .SH EXAMPLE
+ The example below uses
+ .BR sendmmsg ()
+-- 
+2.13.6
+

@@ -1,0 +1,39 @@
+From b336952efa7002ad3c82941708e52e46fc50dfc0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 12 Dec 2017 12:36:46 +0100
+Subject: [PATCH] aide.1, aide.conf.5: fix upstream URL
+
+---
+ aide/man1/aide.1      | 2 +-
+ aide/man5/aide.conf.5 | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/aide/man1/aide.1 b/aide/man1/aide.1
+index 9494210..19e2624 100644
+--- a/aide/man1/aide.1
++++ b/aide/man1/aide.1
+@@ -82,7 +82,7 @@ Default aide database.
+ Default aide output database.
+ .SH SEE ALSO
+ .BR aide.conf (5)
+-.BR http://www.cs.tut.fi/~rammer/aide/manual.html
++.BR http://aide.sourceforge.net/stable/manual.html
+ .SH BUGS
+ There are probably bugs in this release. Please report them
+ at http://sourceforge.net/projects/aide . Bug fixes are more than welcome.
+diff --git a/aide/man5/aide.conf.5 b/aide/man5/aide.conf.5
+index ad01086..c68862f 100644
+--- a/aide/man5/aide.conf.5
++++ b/aide/man5/aide.conf.5
+@@ -332,7 +332,7 @@ In the following, the first is not allowed in AIDE. Use the latter instead.
+ .PP
+ .SH "SEE ALSO"
+ .BR aide (1)
+-.BR http://www.cs.tut.fi/~rammer/aide/manual.html
++.BR http://aide.sourceforge.net/stable/manual.html
+ .SH DISCLAIMER
+ All trademarks are the property of their respective owners.
+ No animals were harmed while making this webpage or this piece of
+-- 
+2.13.6
+

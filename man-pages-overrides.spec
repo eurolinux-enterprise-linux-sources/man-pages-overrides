@@ -2,7 +2,7 @@
 
 Summary: Complementary and updated manual pages
 Name: man-pages-overrides
-Version: 7.4.3
+Version: 7.5.2
 Release: 1%{?dist}
 # license is the same as for the man-pages package
 License: GPL+ and GPLv2+ and BSD and MIT and Copyright only and IEEE
@@ -42,7 +42,7 @@ Patch26: 1312875-mpo-7.3.0-tcp.7.patch
 Patch27: 1315605-mpo-7.3.1-recv.2-cmsg.3.patch
 Patch28: 1330661-mpo-7.3.1-clone.2-fork.2.patch
 Patch29: 1411979-mpo-7.4.0-memparse.1.patch
-Patch30: 1337039-mpo-7.3.0-setfacl.1.patch
+Patch30: 1430271-mpo-7.5.0-cups-browsed.8.patch
 Patch31: 1263629-mpo-7.3.0-cp.1-install.1-mkdir.1-mkfifo.1-mknod.1.patch
 Patch32: 1263632-mpo-7.3.0-cp.1-install.1-mkdir.1-mkfifo.1-mknod.1.patch
 Patch33: 1263635-mpo-7.3.0-cp.1-install.1-mkdir.1-mkfifo.1-mknod.1.patch
@@ -51,6 +51,12 @@ Patch35: 1360898-mpo-7.3.2-prctl.2-capabilities.7.patch
 Patch36: 1390935-mpo-7.4.0-nsswitch.conf.5.patch
 Patch37: 1404478-mpo-7.4.0-packet.7.patch
 Patch38: 1452368-mpo-7.4.2-clone.2.patch
+Patch39: 1439724-mpo-7.5.0-vsftpd.conf.5.patch
+Patch40: 1488506-mpo-7.5.0-imtest.1.patch
+Patch41: 1507143-mpo-7.5.0-vsftpd.conf.5.patch
+Patch42: 1517216-mpo-7.5.0-vsftpd.conf.5.patch
+Patch43: 1437003-mpo-7.5.1-aide.1-aide.conf.5.patch
+Patch44: 1422950-mpo-7.5.2-recvmmsg.2-sendmmsg.2.patch
 
 %description
 A collection of manual ("man") pages to complement other packages or update
@@ -107,6 +113,42 @@ done
 %{_mandir}/overrides/
 
 %changelog
+* Wed Jan 10 2018 Nikola Forró <nforro@redhat.com> - 7.5.2-1
+- Upload new tarball
+- remove obsolete patch
+  related: #1505892
+- recvmmsg.2, sendmmsg.2: point out that error handling is unreliable
+  resolves: #1422950
+
+* Wed Jan 03 2018 Nikola Forró <nforro@redhat.com> - 7.5.1-2
+- vsftpd.conf.5: update patch
+  related: #1517216
+
+* Tue Dec 12 2017 Nikola Forró <nforro@redhat.com> - 7.5.1-1
+- Upload new tarball
+- aide.1, aide.conf.5: fix upstream URL
+  resolves: #1437003
+
+* Tue Nov 28 2017 Nikola Forró <nforro@redhat.com> - 7.5.0-2
+- vsftpd.conf.5: extend description of ascii_download_enable
+  and ascii_upload_enable
+  resolves: #1517216
+
+* Wed Nov 01 2017 Nikola Forró <nforro@redhat.com> - 7.5.0-1
+- Upload new tarball
+  resolves: #1505892
+- remove bug fixed in original component: #1349841 (acl)
+- cups-browsed.8: fix paths to AUTHORS and README
+  resolves: #1430271
+- vsftpd.conf.5: mention conflict between chroot_local_user
+  and text_userdb_names options
+  resolves: #1439724
+- imtest.1, lmtptest.1, mupdatetest.1, nntptest.1, pop3test.1, sivtest.1,
+  smtptest.1: document -w option
+  resolves: #1488506
+- vsftpd.conf.5: document allow_writeable_chroot option
+  resolves: #1507143
+
 * Mon Jun 05 2017 Nikola Forró <nforro@redhat.com> - 7.4.3-1
 - Upload new tarball
 - copy_file_range.2: add new manpage
