@@ -1,0 +1,102 @@
+From 0c42bbdf642de9c11ada1fc371694c6488e71f1d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Mar 2017 14:54:02 +0200
+Subject: [PATCH 2/6] cp.1, install.1, mkdir.1, mkfifo.1, mknod.1: update
+ security context options to reflect coreutils change
+
+---
+ man-pages-zh-CN/zh_CN/man1/cp.1      | 6 ++++++
+ man-pages-zh-CN/zh_CN/man1/install.1 | 6 ++++++
+ man-pages-zh-CN/zh_CN/man1/mkdir.1   | 6 ++++++
+ man-pages-zh-CN/zh_CN/man1/mkfifo.1  | 6 ++++++
+ man-pages-zh-CN/zh_CN/man1/mknod.1   | 6 ++++++
+ 5 files changed, 30 insertions(+)
+
+diff --git a/man-pages-zh-CN/zh_CN/man1/cp.1 b/man-pages-zh-CN/zh_CN/man1/cp.1
+index be003c1..29217ba 100644
+--- a/man-pages-zh-CN/zh_CN/man1/cp.1
++++ b/man-pages-zh-CN/zh_CN/man1/cp.1
+@@ -253,6 +253,12 @@ backups of the others.
+ 总作简单的备份.
+ .RE
+ .SH "GNU 标准选项"
++.TP 
++\fB\-Z\fP
++将目标文件 SELinux 安全上下文设置为默认类型
++.TP 
++\fB\-\-context\fP[=\fI\,CTX\/\fP]
++类似 \fB\-Z\fP，或者如果给定了上下文（CTX）那么将 SELinux 或者 SMACK 安全上下文设置为给定值
+ .TP
+ .B "\-\-help"
+ 印出用法并退出.
+diff --git a/man-pages-zh-CN/zh_CN/man1/install.1 b/man-pages-zh-CN/zh_CN/man1/install.1
+index 0eede5c..fb396f3 100644
+--- a/man-pages-zh-CN/zh_CN/man1/install.1
++++ b/man-pages-zh-CN/zh_CN/man1/install.1
+@@ -157,6 +157,12 @@ GNU版本的程序如
+ 总作简单备份.
+ .RE
+ .SH "GNU STANDARD OPTIONS(GNU标准选项)"
++.TP 
++\fB\-Z\fP
++将目标文件 SELinux 安全上下文设置为默认类型
++.TP 
++\fB\-\-context\fP[=\fI\,CTX\/\fP]
++类似 \fB\-Z\fP，或者如果给定了上下文（CTX）那么将 SELinux 或者 SMACK 安全上下文设置为给定值
+ .TP
+ .B "\-\-help"
+ 在标准输出上打印一条用法信息,并以成功状态退出.
+diff --git a/man-pages-zh-CN/zh_CN/man1/mkdir.1 b/man-pages-zh-CN/zh_CN/man1/mkdir.1
+index 20b358e..c2697eb 100644
+--- a/man-pages-zh-CN/zh_CN/man1/mkdir.1
++++ b/man-pages-zh-CN/zh_CN/man1/mkdir.1
+@@ -33,6 +33,12 @@ mkdir 用指定的名字建立目录。
+ .BI "--verbose"
+ 打印出新建立的每一个目录名。与--parents联合使用最有效。
+ .SH GNU 标准选项
++.TP 
++\fB\-Z\fP
++将目标文件 SELinux 安全上下文设置为默认类型
++.TP 
++\fB\-\-context\fP[=\fI\,CTX\/\fP]
++类似 \fB\-Z\fP，或者如果给定了上下文（CTX）那么将 SELinux 或者 SMACK 安全上下文设置为给定值
+ .TP
+ .BI "-help"
+ 在标准输出上显示使用信息并顺利退出。
+diff --git a/man-pages-zh-CN/zh_CN/man1/mkfifo.1 b/man-pages-zh-CN/zh_CN/man1/mkfifo.1
+index 98dbe4d..a2c5ba5 100644
+--- a/man-pages-zh-CN/zh_CN/man1/mkfifo.1
++++ b/man-pages-zh-CN/zh_CN/man1/mkfifo.1
+@@ -32,6 +32,12 @@ GNU options(选项）（最短格式）：
+ .BR chmod(1)
+ 中的符号模式,并使用默认模式作为起始点.
+ .SH "GNU STANDARD OPTIONS(GNU标准选项)"
++.TP 
++\fB\-Z\fP
++将目标文件 SELinux 安全上下文设置为默认类型
++.TP 
++\fB\-\-context\fP[=\fI\,CTX\/\fP]
++类似 \fB\-Z\fP，或者如果给定了上下文（CTX）那么将 SELinux 或者 SMACK 安全上下文设置为给定值
+ .TP
+ .B "\-\-help"
+ 在标准输出上打印一条用法信息,并以成功状态退出.
+diff --git a/man-pages-zh-CN/zh_CN/man1/mknod.1 b/man-pages-zh-CN/zh_CN/man1/mknod.1
+index 24c5e51..3b26f89 100644
+--- a/man-pages-zh-CN/zh_CN/man1/mknod.1
++++ b/man-pages-zh-CN/zh_CN/man1/mknod.1
+@@ -59,6 +59,12 @@ GNU版本还允许使用u（'unbufferd'非缓冲化），
+ 用缺省模式建立新目录。
+ 
+ .SH GNU 标准选项
++.TP 
++\fB\-Z\fP
++将目标文件 SELinux 安全上下文设置为默认类型
++.TP 
++\fB\-\-context\fP[=\fI\,CTX\/\fP]
++类似 \fB\-Z\fP，或者如果给定了上下文（CTX）那么将 SELinux 或者 SMACK 安全上下文设置为给定值
+ .TP
+ .B "\-\-help"
+ 在标准输出上显示使用信息并顺利退出。
+-- 
+2.7.4
+

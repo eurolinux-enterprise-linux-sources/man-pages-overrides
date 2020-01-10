@@ -1,0 +1,25 @@
+From 0672cb6c7a23e6a3a8bab9176279af6adc8407b7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Mar 2017 14:59:49 +0200
+Subject: [PATCH 4/6] memparse.1: remove incorrect description
+
+---
+ libmemcached/man1/memparse.1 | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/libmemcached/man1/memparse.1 b/libmemcached/man1/memparse.1
+index 1760a52..4ca35a8 100644
+--- a/libmemcached/man1/memparse.1
++++ b/libmemcached/man1/memparse.1
+@@ -30,8 +30,6 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+ ..
+ .\" Man page generated from reStructuredText.
+ .
+-.sp
+-Copies files to a collection of memcached servers
+ .SH SYNOPSIS
+ .sp
+ memparse [options] "option string"
+-- 
+2.7.4
+

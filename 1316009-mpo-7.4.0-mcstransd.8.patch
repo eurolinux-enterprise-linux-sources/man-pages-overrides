@@ -1,0 +1,32 @@
+From f8a1f766c22973c136b3e803280f76051dd318cb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Mar 2017 14:57:55 +0200
+Subject: [PATCH 3/6] mcstransd.8: fix typos
+
+---
+ mcstrans/man8/mcstransd.8 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mcstrans/man8/mcstransd.8 b/mcstrans/man8/mcstransd.8
+index f92a572..af2390e 100644
+--- a/mcstrans/man8/mcstransd.8
++++ b/mcstrans/man8/mcstransd.8
+@@ -11,13 +11,13 @@ This manual page describes the
+ .BR mcstransd
+ program.
+ .P
+-This daemon reads /etc/selinux/{SELINUXTYPE}/setrans.conf and /etc/selinux/{SELINUXTYPE}/secolors.conf configuration files, and communicates with libselinux via a socket in /var/run/setrans.
++This daemon reads /etc/selinux/{SELINUXTYPE}/setrans.conf and /etc/selinux/{SELINUXTYPE}/secolor.conf configuration files, and communicates with libselinux via a socket in /var/run/setrans.
+ It also watches for files created in /var/run/setrans and uses the contents of these files to generate translations to the names.  For example writing a file /var/run/setrans/mydomain with content of s0:c1,c2 will cause mcstrans to translate s0:c1,c2 to mydomain.
+ 
+ .SH "AUTHOR"
+ This man page was written by Dan Walsh <dwalsh@redhat.com>.
+ The program was originally written by Dan Walsh <dwalsh@redhat.com>.
+-The program was enhanced/rwwritten by Joe Nall <joe@nall.com>.
++The program was enhanced/rewritten by Joe Nall <joe@nall.com>.
+ 
+ .SH "FILES"
+ /etc/selinux/{SELINUXTYPE}/setrans.conf 
+-- 
+2.7.4
+

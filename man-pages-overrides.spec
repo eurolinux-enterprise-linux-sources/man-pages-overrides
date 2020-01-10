@@ -2,8 +2,8 @@
 
 Summary: Complementary and updated manual pages
 Name: man-pages-overrides
-Version: 7.3.2
-Release: 2%{?dist}
+Version: 7.4.3
+Release: 1%{?dist}
 # license is the same as for the man-pages package
 License: GPL+ and GPLv2+ and BSD and MIT and Copyright only and IEEE
 Group: Documentation
@@ -15,14 +15,14 @@ Patch1: 1086994-mpo-7.1.0-proc.5.patch
 Patch2: 1112307-mpo-7.3.0-cciss.4.patch
 Patch3: 1021967-mpo-7.1.0-socat.1.patch
 Patch4: 1131853-mpo-7.1.0-proc.5-proc-fs-not-empty.patch
-Patch5: 1181670-mpo-7.3.0-libpaf-dsc.3-libpaf-ebb.3.patch
+Patch5: 1085531-mpo-7.4.0-ipvsadm.8.patch
 Patch6: 1255283-mpo-7.3.0-captest.8.patch
 Patch7: 1129235-mpo-7.1.0-flock.2.patch
 # aarch64 specific patch
 Patch8: 1361588-recv-for-aarch64.patch
 Patch9: 1263575-mpo-7.3.1-libpng.3-png.5.patch
-Patch10: 1109291-mpo-7.1.0-mailx.1.patch
-Patch11: 1109294-mpo-7.1.0-mailx.1.environment-variables.patch
+Patch10: 1263636-mpo-7.4.0-cp.1-install.1-mkdir.1-mkfifo.1-mknod.1.patch
+Patch11: 1316009-mpo-7.4.0-mcstransd.8.patch
 Patch12: 1131939-mpo-7.1.0-charsets.7-nl_langinfo.3.patch
 Patch13: 1131859-mpo-7.1.0-host.conf.5.patch
 Patch14: 1269549-mpo-7.3.0-socket.7.patch
@@ -34,19 +34,23 @@ Patch18: 1197850-mpo-7.2.0-backport-thread-safety-information.patch
 Patch19: 1120294-madvise.2-MADV_REMOVE-supports-more-filesystems.patch
 Patch20: 1147718-resolv.conf.5-add-missing-no-tld-query.patch
 Patch21: 1289915-mpo-7.3.0-nsswitch.conf.5.patch
-Patch22: 1064756-mpo-7.1.2-netstat.8.patch
+Patch22: 1452424-mpo-7.4.2-stat.2.patch
 Patch23: 1141874-mpo-7.2.0-mgetty-fix-typos-in-mgetty-s-man-pages.patch
 Patch24: 1297898-mpo-7.3.0-prctl.2.patch
 Patch25: 1222720-mpo-7.2.0-rtld-audit.7.patch
 Patch26: 1312875-mpo-7.3.0-tcp.7.patch
 Patch27: 1315605-mpo-7.3.1-recv.2-cmsg.3.patch
 Patch28: 1330661-mpo-7.3.1-clone.2-fork.2.patch
+Patch29: 1411979-mpo-7.4.0-memparse.1.patch
 Patch30: 1337039-mpo-7.3.0-setfacl.1.patch
 Patch31: 1263629-mpo-7.3.0-cp.1-install.1-mkdir.1-mkfifo.1-mknod.1.patch
 Patch32: 1263632-mpo-7.3.0-cp.1-install.1-mkdir.1-mkfifo.1-mknod.1.patch
 Patch33: 1263635-mpo-7.3.0-cp.1-install.1-mkdir.1-mkfifo.1-mknod.1.patch
 Patch34: 1263637-mpo-7.3.0-cp.1-install.1-mkdir.1-mkfifo.1-mknod.1.patch
 Patch35: 1360898-mpo-7.3.2-prctl.2-capabilities.7.patch
+Patch36: 1390935-mpo-7.4.0-nsswitch.conf.5.patch
+Patch37: 1404478-mpo-7.4.0-packet.7.patch
+Patch38: 1452368-mpo-7.4.2-clone.2.patch
 
 %description
 A collection of manual ("man") pages to complement other packages or update
@@ -103,6 +107,47 @@ done
 %{_mandir}/overrides/
 
 %changelog
+* Mon Jun 05 2017 Nikola Forró <nforro@redhat.com> - 7.4.3-1
+- Upload new tarball
+- copy_file_range.2: add new manpage
+  resolves: #1458195
+
+* Mon May 22 2017 Nikola Forró <nforro@redhat.com> - 7.4.2-1
+- Upload new tarball
+  related: #1435590
+- stat.2: update to cover latest things used in RHEL7
+  resolves: #1452424
+- clone.2: document features related to namespaces
+  resolves: #1452368
+
+* Thu Apr 13 2017 Nikola Forró <nforro@redhat.com> - 7.4.1-1
+- Upload new tarball
+  related: #1435590
+- remove bug fixed in original component: #1167833 (net-tools)
+
+* Tue Mar 28 2017 Nikola Forró <nforro@redhat.com> - 7.4.0-1
+- Upload new tarball
+  resolves: #1435590
+- remove bug fixed in original component: #1147568 (mailx)
+- remove bug fixed in original component: #1147570 (mailx)
+- remove bug fixed in original component: #1147565 (ecj)
+- remove bug fixed in original component: #1349833 (paflib)
+- ipvsadm.8: add missing option
+  resolves: #1085531
+- cp.1, install.1, mkdir.1, mkfifo.1, mknod.1: update security context options
+  to reflect coreutils change
+  resolves: #1263636
+- mcstransd.8: fix typos
+  resolves: #1316009
+- memparse.1: remove incorrect description
+  resolves: #1411979
+- nsswitch.conf.5: add information about sss service
+  resolves: #1390935
+- packet.7: add missing socket options
+  resolves: #1404478
+- namespaces.7, pid_namespaces.7, user_namespaces.7: add new manpages
+  resolves: #1377583
+
 * Thu Sep 22 2016 Nikola Forró <nforro@redhat.com> - 7.3.2-2
 - open.2: revert documenting O_TMPFILE option
   related: #1330740

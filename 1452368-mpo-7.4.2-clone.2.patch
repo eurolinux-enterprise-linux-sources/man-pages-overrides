@@ -1,0 +1,1763 @@
+From fb510f4e3dc6c13696bce6d3a79b8cea9b03b044 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Mon, 22 May 2017 14:51:53 +0200
+Subject: [PATCH 1/2] clone.2: document features related to namespaces
+
+---
+ man-pages/man2/____clone.2 | 524 ++++++++++++++++++++++++++++-----------------
+ man-pages/man2/clone.2     | 524 ++++++++++++++++++++++++++++-----------------
+ 2 files changed, 658 insertions(+), 390 deletions(-)
+
+diff --git a/man-pages/man2/____clone.2 b/man-pages/man2/____clone.2
+index 56d03cf..edf0994 100644
+--- a/man-pages/man2/____clone.2
++++ b/man-pages/man2/____clone.2
+@@ -39,50 +39,23 @@
+ .\" 2008-11-19, mtk, document CLONE_NEWIPC
+ .\" 2008-11-19, Jens Axboe, mtk, document CLONE_IO
+ .\"
+-.\" FIXME Document CLONE_NEWUSER, which is new in 2.6.23
+-.\"       (also supported for unshare()?)
+-.\"
+-.TH CLONE 2 2013-04-16 "Linux" "Linux Programmer's Manual"
++.TH CLONE 2 2016-12-12 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+ clone, __clone2 \- create a child process
+ .SH SYNOPSIS
+ .nf
+ /* Prototype for the glibc wrapper function */
+ 
++.B #define _GNU_SOURCE
+ .B #include <sched.h>
+ 
+ .BI "int clone(int (*" "fn" ")(void *), void *" child_stack ,
+ .BI "          int " flags ", void *" "arg" ", ... "
+-.BI "          /* pid_t *" ptid ", struct user_desc *" tls \
++.BI "          /* pid_t *" ptid ", void *" newtls \
+ ", pid_t *" ctid " */ );"
+ 
+-/* Prototype for the raw system call */
+-
+-.BI "long clone(unsigned long " flags ", void *" child_stack ,
+-.BI "          void *" ptid ", void *" ctid ,
+-.BI "          struct pt_regs *" regs );
++/* For the prototype of the raw system call, see NOTES */
+ .fi
+-.sp
+-.in -4n
+-Feature Test Macro Requirements for glibc wrapper function (see
+-.BR feature_test_macros (7)):
+-.in
+-.sp
+-.BR clone ():
+-.ad l
+-.RS 4
+-.PD 0
+-.TP 4
+-Since glibc 2.14:
+-_GNU_SOURCE
+-.TP 4
+-.\" FIXME See http://sources.redhat.com/bugzilla/show_bug.cgi?id=4749
+-Before glibc 2.14:
+-_BSD_SOURCE || _SVID_SOURCE
+-    /* _GNU_SOURCE also suffices */
+-.PD
+-.RE
+-.ad b
+ .SH DESCRIPTION
+ .BR clone ()
+ creates a new process, in a manner similar to
+@@ -107,7 +80,7 @@ But see the description of
+ .B CLONE_PARENT
+ below.)
+ 
+-The main use of
++One use of
+ .BR clone ()
+ is to implement threads: multiple threads of control in a program that
+ run concurrently in a shared memory space.
+@@ -180,7 +153,7 @@ in order to specify what is shared between the calling process
+ and the child process:
+ .TP
+ .BR CLONE_CHILD_CLEARTID " (since Linux 2.5.49)"
+-Erase child thread ID at location
++Clear (zero) the child thread ID at the location
+ .I ctid
+ in child memory when the child exits, and do a wakeup on the futex
+ at that address.
+@@ -190,9 +163,12 @@ system call.
+ This is used by threading libraries.
+ .TP
+ .BR CLONE_CHILD_SETTID " (since Linux 2.5.49)"
+-Store child thread ID at location
++Store the child thread ID at the location
+ .I ctid
+-in child memory.
++in the child's memory.
++The store operation completes before
++.BR clone ()
++returns control to user space.
+ .TP
+ .BR CLONE_FILES " (since Linux 2.0)"
+ If
+@@ -206,27 +182,31 @@ or changes its associated flags (using the
+ .BR fcntl (2)
+ .B F_SETFD
+ operation), the other process is also affected.
++If a process sharing a file descriptor table calls
++.BR execve (2),
++its file descriptor table is duplicated (unshared).
+ 
+ If
+ .B CLONE_FILES
+ is not set, the child process inherits a copy of all file descriptors
+ opened in the calling process at the time of
+ .BR clone ().
+-(The duplicated file descriptors in the child refer to the
+-same open file descriptions (see
+-.BR open (2))
+-as the corresponding file descriptors in the calling process.)
+ Subsequent operations that open or close file descriptors,
+ or change file descriptor flags,
+ performed by either the calling
+ process or the child process do not affect the other process.
++Note, however,
++that the duplicated file descriptors in the child refer to the same open file
++descriptions as the corresponding file descriptors in the calling process,
++and thus share file offsets and file status flags (see
++.BR open (2)).
+ .TP
+ .BR CLONE_FS " (since Linux 2.0)"
+ If
+ .B CLONE_FS
+-is set, the caller and the child process share the same file system
++is set, the caller and the child process share the same filesystem
+ information.
+-This includes the root of the file system, the current
++This includes the root of the filesystem, the current
+ working directory, and the umask.
+ Any call to
+ .BR chroot (2),
+@@ -238,7 +218,7 @@ other process.
+ 
+ If
+ .B CLONE_FS
+-is not set, the child process works on a copy of the file system
++is not set, the child process works on a copy of the filesystem
+ information of the calling process at the time of the
+ .BR clone ()
+ call.
+@@ -258,7 +238,7 @@ If this flag is not set, then (as with
+ the new process has its own I/O context.
+ 
+ .\" The following based on text from Jens Axboe
+-The I/O context is the I/O scope of the disk scheduler (i.e,
++The I/O context is the I/O scope of the disk scheduler (i.e.,
+ what the I/O scheduler uses to model scheduling of a process's I/O).
+ If processes share the same I/O context,
+ they are treated as one by the I/O scheduler.
+@@ -288,7 +268,7 @@ the process is created in the same IPC namespace as
+ the calling process.
+ This flag is intended for the implementation of containers.
+ 
+-An IPC namespace provides an isolated view of System V IPC objects (see
++An IPC namespace provides an isolated view of System\ V IPC objects (see
+ .BR svipc (7))
+ and (since Linux 2.6.30)
+ .\" commit 7eafd7c74c3f2e67c27621b987b28397110d643f
+@@ -308,17 +288,17 @@ When an IPC namespace is destroyed
+ (i.e., when the last process that is a member of the namespace terminates),
+ all IPC objects in the namespace are automatically destroyed.
+ 
+-Use of this flag requires: a kernel configured with the
+-.B CONFIG_SYSVIPC
+-and
+-.B CONFIG_IPC_NS
+-options and that the process be privileged
+-.RB ( CAP_SYS_ADMIN ).
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWIPC .
+ This flag can't be specified in conjunction with
+ .BR CLONE_SYSVSEM .
++
++For further information on IPC namespaces, see
++.BR namespaces (7).
+ .TP
+ .BR CLONE_NEWNET " (since Linux 2.6.24)"
+-.\" FIXME Check when the implementation was completed
+ (The implementation of this flag was completed only
+ by about kernel version 2.6.29.)
+ 
+@@ -326,7 +306,7 @@ If
+ .B CLONE_NEWNET
+ is set, then create the process in a new network namespace.
+ If this flag is not set, then (as with
+-.BR fork (2)),
++.BR fork (2))
+ the process is created in the same network namespace as
+ the calling process.
+ This flag is intended for the implementation of containers.
+@@ -341,7 +321,7 @@ directory trees, sockets, etc.).
+ A physical network device can live in exactly one
+ network namespace.
+ A virtual network device ("veth") pair provides a pipe-like abstraction
+-.\" FIXME Add pointer to veth(4) page when it is eventually completed
++.\" FIXME . Add pointer to veth(4) page when it is eventually completed
+ that can be used to create tunnels between network namespaces,
+ and can be used to create a bridge to a physical network device
+ in another namespace.
+@@ -350,54 +330,41 @@ When a network namespace is freed
+ (i.e., when the last process in the namespace terminates),
+ its physical network devices are moved back to the
+ initial network namespace (not to the parent of the process).
++For further information on network namespaces, see
++.BR namespaces (7).
+ 
+-Use of this flag requires: a kernel configured with the
+-.B CONFIG_NET_NS
+-option and that the process be privileged
+-.RB ( CAP_SYS_ADMIN ).
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWNET .
+ .TP
+ .BR CLONE_NEWNS " (since Linux 2.4.19)"
+-Start the child in a new mount namespace.
+-
+-Every process lives in a mount namespace.
+-The
+-.I namespace
+-of a process is the data (the set of mounts) describing the file hierarchy
+-as seen by that process.
+-After a
+-.BR fork (2)
+-or
+-.BR clone ()
+-where the
+-.B CLONE_NEWNS
+-flag is not set, the child lives in the same mount
+-namespace as the parent.
+-The system calls
+-.BR mount (2)
+-and
+-.BR umount (2)
+-change the mount namespace of the calling process, and hence affect
+-all processes that live in the same namespace, but do not affect
+-processes in a different mount namespace.
+-
+-After a
+-.BR clone ()
+-where the
++If
+ .B CLONE_NEWNS
+-flag is set, the cloned child is started in a new mount namespace,
++is set, the cloned child is started in a new mount namespace,
+ initialized with a copy of the namespace of the parent.
+-
+-Only a privileged process (one having the \fBCAP_SYS_ADMIN\fP capability)
+-may specify the
++If
+ .B CLONE_NEWNS
+-flag.
++is not set, the child lives in the same mount
++namespace as the parent.
++
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWNS .
+ It is not permitted to specify both
+ .B CLONE_NEWNS
+ and
+ .B CLONE_FS
++.\" See https://lwn.net/Articles/543273/
+ in the same
+ .BR clone ()
+ call.
++
++For further information on mount namespaces, see
++.BR namespaces (7)
++and
++.BR mount_namespaces (7).
+ .TP
+ .BR CLONE_NEWPID " (since Linux 2.6.24)"
+ .\" This explanation draws a lot of details from
+@@ -411,73 +378,74 @@ If
+ .B CLONE_NEWPID
+ is set, then create the process in a new PID namespace.
+ If this flag is not set, then (as with
+-.BR fork (2)),
++.BR fork (2))
+ the process is created in the same PID namespace as
+ the calling process.
+ This flag is intended for the implementation of containers.
+ 
+-A PID namespace provides an isolated environment for PIDs:
+-PIDs in a new namespace start at 1,
+-somewhat like a standalone system, and calls to
+-.BR fork (2),
+-.BR vfork (2),
++For further information on PID namespaces, see
++.BR namespaces (7)
++and
++.BR pid_namespaces (7).
++
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWPID .
++This flag can't be specified in conjunction with
++.BR CLONE_THREAD
+ or
++.BR CLONE_PARENT .
++.TP
++.BR CLONE_NEWUSER
++(This flag first became meaningful for
+ .BR clone ()
+-will produce processes with PIDs that are unique within the namespace.
++in Linux 2.6.23,
++the current
++.BR clone ()
++semantics were merged in Linux 3.5,
++and the final pieces to make the user namespaces completely usable were
++merged in Linux 3.8.)
+ 
+-The first process created in a new namespace
+-(i.e., the process created using the
+-.BR CLONE_NEWPID
+-flag) has the PID 1, and is the "init" process for the namespace.
+-Children that are orphaned within the namespace will be reparented
+-to this process rather than
+-.BR init (8).
+-Unlike the traditional
+-.B init
+-process, the "init" process of a PID namespace can terminate,
+-and if it does, all of the processes in the namespace are terminated.
+-
+-PID namespaces form a hierarchy.
+-When a new PID namespace is created,
+-the processes in that namespace are visible
+-in the PID namespace of the process that created the new namespace;
+-analogously, if the parent PID namespace is itself
+-the child of another PID namespace,
+-then processes in the child and parent PID namespaces will both be
+-visible in the grandparent PID namespace.
+-Conversely, the processes in the "child" PID namespace do not see
+-the processes in the parent namespace.
+-The existence of a namespace hierarchy means that each process
+-may now have multiple PIDs:
+-one for each namespace in which it is visible;
+-each of these PIDs is unique within the corresponding namespace.
+-(A call to
+-.BR getpid (2)
+-always returns the PID associated with the namespace in which
+-the process lives.)
+-
+-After creating the new namespace,
+-it is useful for the child to change its root directory
+-and mount a new procfs instance at
+-.I /proc
+-so that tools such as
+-.BR ps (1)
+-work correctly.
+-.\" mount -t proc proc /proc
+-(If
+-.BR CLONE_NEWNS
+-is also included in
+-.IR flags ,
+-then it isn't necessary to change the root directory:
+-a new procfs instance can be mounted directly over
+-.IR /proc .)
++If
++.B CLONE_NEWUSER
++is set, then create the process in a new user namespace.
++If this flag is not set, then (as with
++.BR fork (2))
++the process is created in the same user namespace as the calling process.
++
++For further information on user namespaces, see
++.BR namespaces (7)
++and
++.BR user_namespaces (7)
++
++Before Linux 3.8, use of
++.BR CLONE_NEWUSER
++required that the caller have three capabilities:
++.BR CAP_SYS_ADMIN ,
++.BR CAP_SETUID ,
++and
++.BR CAP_SETGID .
++.\" Before Linux 2.6.29, it appears that only CAP_SYS_ADMIN was needed
++Starting with Linux 3.8,
++no privileges are needed to create a user namespace.
+ 
+-Use of this flag requires: a kernel configured with the
+-.B CONFIG_PID_NS
+-option and that the process be privileged
+-.RB ( CAP_SYS_ADMIN ).
+ This flag can't be specified in conjunction with
+-.BR CLONE_THREAD .
++.BR CLONE_THREAD
++or
++.BR CLONE_PARENT .
++For security reasons,
++.\" commit e66eded8309ebf679d3d3c1f5820d1f2ca332c71
++.\" https://lwn.net/Articles/543273/
++.\" The fix actually went into 3.9 and into 3.8.3. However, user namespaces
++.\" were, for practical purposes, unusable in earlier 3.8.x because of the
++.\" various filesystems that didn't support userns.
++.BR CLONE_NEWUSER
++cannot be specified in conjunction with
++.BR CLONE_FS .
++
++For further information on user namespaces, see
++.BR user_namespaces (7).
+ .TP
+ .BR CLONE_NEWUTS " (since Linux 2.6.19)"
+ If
+@@ -486,27 +454,29 @@ is set, then create the process in a new UTS namespace,
+ whose identifiers are initialized by duplicating the identifiers
+ from the UTS namespace of the calling process.
+ If this flag is not set, then (as with
+-.BR fork (2)),
++.BR fork (2))
+ the process is created in the same UTS namespace as
+ the calling process.
+ This flag is intended for the implementation of containers.
+ 
+ A UTS namespace is the set of identifiers returned by
+ .BR uname (2);
+-among these, the domain name and the host name can be modified by
++among these, the domain name and the hostname can be modified by
+ .BR setdomainname (2)
+ and
+-.BR
+ .BR sethostname (2),
+ respectively.
+ Changes made to the identifiers in a UTS namespace
+ are visible to all other processes in the same namespace,
+ but are not visible to processes in other UTS namespaces.
+ 
+-Use of this flag requires: a kernel configured with the
+-.B CONFIG_UTS_NS
+-option and that the process be privileged
+-.RB ( CAP_SYS_ADMIN ).
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWUTS .
++
++For further information on UTS namespaces, see
++.BR namespaces (7).
+ .TP
+ .BR CLONE_PARENT " (since Linux 2.3.12)"
+ If
+@@ -530,12 +500,15 @@ is set, then the parent of the calling process, rather than the
+ calling process itself, will be signaled.
+ .TP
+ .BR CLONE_PARENT_SETTID " (since Linux 2.5.49)"
+-Store child thread ID at location
++Store the child thread ID at the location
+ .I ptid
+-in parent and child memory.
++in the parent's memory.
+ (In Linux 2.5.32-2.5.48 there was a flag
+ .B CLONE_SETTID
+ that did this.)
++The store operation completes before
++.BR clone ()
++returns control to user space.
+ .TP
+ .BR CLONE_PID " (obsolete)"
+ If
+@@ -547,6 +520,7 @@ of not much use.
+ Since 2.3.21 this flag can be
+ specified only by the system boot process (PID 0).
+ It disappeared in Linux 2.5.16.
++Since then, the kernel silently ignores it without error.
+ .TP
+ .BR CLONE_PTRACE " (since Linux 2.2)"
+ If
+@@ -556,11 +530,25 @@ then trace the child also (see
+ .BR ptrace (2)).
+ .TP
+ .BR CLONE_SETTLS " (since Linux 2.5.32)"
+-The
++The TLS (Thread Local Storage) descriptor is set to
++.I newtls.
++
++The interpretation of
+ .I newtls
+-argument is the new TLS (Thread Local Storage) descriptor.
++and the resulting effect is architecture dependent.
++On x86,
++.I newtls
++is interpreted as a
++.IR "struct user_desc *"
+ (See
+-.BR set_thread_area (2).)
++.BR set_thread_area (2)).
++On x86_64 it is the new value to be set for the %fs base register
++(See the
++.I ARCH_SET_FS
++argument to
++.BR arch_prctl (2)).
++On architectures with a dedicated TLS register, it is the new value
++of that register.
+ .TP
+ .BR CLONE_SIGHAND " (since Linux 2.0)"
+ If
+@@ -612,16 +600,26 @@ from Linux 2.6.25 onward,
+ and was
+ .I removed
+ altogether in Linux 2.6.38.
++Since then, the kernel silently ignores it without error.
+ .\" glibc 2.8 removed this defn from bits/sched.h
+ .TP
+ .BR CLONE_SYSVSEM " (since Linux 2.5.10)"
+ If
+ .B CLONE_SYSVSEM
+ is set, then the child and the calling process share
+-a single list of System V semaphore undo values (see
++a single list of System V semaphore adjustment
++.RI ( semadj )
++values (see
+ .BR semop (2)).
+-If this flag is not set, then the child has a separate undo list,
+-which is initially empty.
++In this case, the shared list accumulates
++.I semadj
++values across all processes sharing the list,
++and semaphore adjustments are performed only when the last process
++that is sharing the list terminates (or ceases sharing the list using
++.BR unshare (2)).
++If this flag is not set, then the child has a separate
++.I semadj
++list that is initially empty.
+ .TP
+ .BR CLONE_THREAD " (since Linux 2.4.0-test8)"
+ If
+@@ -703,7 +701,12 @@ must also include
+ .B CLONE_SIGHAND
+ if
+ .B CLONE_THREAD
+-is specified.
++is specified
++(and note that, since Linux 2.6.0-test6,
++.BR CLONE_SIGHAND
++also requires
++.BR CLONE_VM
++to be included).
+ 
+ Signals may be sent to a thread group as a whole (i.e., a TGID) using
+ .BR kill (2),
+@@ -761,7 +764,7 @@ or
+ 
+ If
+ .B CLONE_VFORK
+-is not set then both the calling process and the child are schedulable
++is not set, then both the calling process and the child are schedulable
+ after the call, and an application should not rely on execution occurring
+ in any particular order.
+ .TP
+@@ -786,7 +789,7 @@ space of the calling process at the time of
+ Memory writes or file mappings/unmappings performed by one of the
+ processes do not affect the other, as with
+ .BR fork (2).
+-.SS The raw system call interface
++.SS C library/kernel differences
+ The raw
+ .BR clone ()
+ system call corresponds more closely to
+@@ -801,16 +804,58 @@ arguments of the
+ .BR clone ()
+ wrapper function are omitted.
+ Furthermore, the argument order changes.
+-The raw system call interface on x86 and many other architectures is roughly:
++In addition, there are variations across architectures.
++
++The raw system call interface on x86-64 and some other architectures
++(including sh, tile, and alpha) is roughly:
++
+ .in +4
+ .nf
++.BI "long clone(unsigned long " flags ", void *" child_stack ,
++.BI "           int *" ptid ", int *" ctid ,
++.BI "           unsigned long " newtls );
++.fi
++.in
++
++On x86-32, and several other common architectures
++(including score, ARM, ARM 64, PA-RISC, arc, Power PC, xtensa,
++and MIPS),
++.\" CONFIG_CLONE_BACKWARDS
++the order of the last two arguments is reversed:
+ 
++.in +4
++.nf
+ .BI "long clone(unsigned long " flags ", void *" child_stack ,
+-.BI "           void *" ptid ", void *" ctid ,
+-.BI "           struct pt_regs *" regs );
++.BI "          int *" ptid ", unsigned long " newtls ,
++.BI "          int *" ctid );
++.fi
++.in
++
++On the cris and s390 architectures,
++.\" CONFIG_CLONE_BACKWARDS2
++the order of the first two arguments is reversed:
+ 
++.in +4
++.nf
++.BI "long clone(void *" child_stack ", unsigned long " flags ,
++.BI "           int *" ptid ", int *" ctid ,
++.BI "           unsigned long " newtls );
++.fi
++.in
++
++On the microblaze architecture,
++.\" CONFIG_CLONE_BACKWARDS3
++an additional argument is supplied:
++
++.in +4
++.nf
++.BI "long clone(unsigned long " flags ", void *" child_stack ,
++.BI "           int " stack_size , "\fR         /* Size of stack */"
++.BI "           int *" ptid ", int *" ctid ,
++.BI "           unsigned long " newtls );
+ .fi
+ .in
++
+ Another difference for the raw system call is that the
+ .I child_stack
+ argument may be zero, in which case copy-on-write semantics ensure that the
+@@ -819,17 +864,13 @@ the stack.
+ In this case, for correct operation, the
+ .B CLONE_VM
+ option should not be specified.
+-
+-For some architectures, the order of the arguments for the system call
+-differs from that shown above.
+-On the score, microblaze, ARM, ARM 64, PA-RISC, arc, Power PC, xtensa,
+-and MIPS architectures,
+-the order of the fourth and fifth arguments is reversed.
+-On the cris and s390 architectures,
+-the order of the first and second arguments is reversed.
++.\"
+ .SS blackfin, m68k, and sparc
++.\" Mike Frysinger noted in a 2013 mail:
++.\"     these arches don't define __ARCH_WANT_SYS_CLONE:
++.\"     blackfin ia64 m68k sparc
+ The argument-passing conventions on
+-blackfin, m68k, and sparc are different from descriptions above.
++blackfin, m68k, and sparc are different from the descriptions above.
+ For details, see the kernel (and glibc) source.
+ .SS ia64
+ On ia64, a different interface is used:
+@@ -883,7 +924,8 @@ will be set appropriately.
+ .SH ERRORS
+ .TP
+ .B EAGAIN
+-Too many processes are already running.
++Too many processes are already running; see
++.BR fork (2).
+ .TP
+ .B EINVAL
+ .B CLONE_SIGHAND
+@@ -908,6 +950,7 @@ was not.
+ .\" (Since Linux 2.6.0-test6.)
+ .TP
+ .B EINVAL
++.\" commit e66eded8309ebf679d3d3c1f5820d1f2ca332c71
+ Both
+ .B CLONE_FS
+ and
+@@ -915,6 +958,14 @@ and
+ were specified in
+ .IR flags .
+ .TP
++.BR EINVAL " (since Linux 3.9)"
++Both
++.B CLONE_NEWUSER
++and
++.B CLONE_FS
++were specified in
++.IR flags .
++.TP
+ .B EINVAL
+ Both
+ .B CLONE_NEWIPC
+@@ -924,18 +975,25 @@ were specified in
+ .IR flags .
+ .TP
+ .B EINVAL
+-Both
++One (or both) of
+ .BR CLONE_NEWPID
+-and
++or
++.BR CLONE_NEWUSER
++and one (or both) of
+ .BR CLONE_THREAD
++or
++.BR CLONE_PARENT
+ were specified in
+ .IR flags .
+ .TP
+ .B EINVAL
+-Returned by
++Returned by the glibc
+ .BR clone ()
+-when a zero value is specified for
+-.IR child_stack .
++wrapper function when
++.IR fn
++or
++.IR child_stack
++is specified as NULL.
+ .TP
+ .B EINVAL
+ .BR CLONE_NEWIPC
+@@ -971,11 +1029,48 @@ but the kernel was not configured with the
+ .B CONFIG_UTS
+ option.
+ .TP
++.B EINVAL
++.I child_stack
++is not aligned to a suitable boundary for this architecture.
++For example, on aarch64,
++.I child_stack
++must be a multiple of 16.
++.TP
+ .B ENOMEM
+ Cannot allocate sufficient memory to allocate a task structure for the
+ child, or to copy those parts of the caller's context that need to be
+ copied.
+ .TP
++.BR ENOSPC " (since Linux 3.7)"
++.\" commit f2302505775fd13ba93f034206f1e2a587017929
++.B CLONE_NEWPID
++was specified in flags,
++but the limit on the nesting depth of PID namespaces
++would have been exceeded; see
++.BR pid_namespaces (7).
++.TP
++.BR ENOSPC " (since Linux 4.9; beforehand " EUSERS )
++.B CLONE_NEWUSER
++was specified in
++.IR flags ,
++and the call would cause the limit on the number of
++nested user namespaces to be exceeded.
++See
++.BR user_namespaces (7).
++
++From Linux 3.11 to Linux 4.8, the error diagnosed in this case was
++.BR EUSERS .
++.TP
++.BR ENOSPC " (since Linux 4.9)"
++One of the values in
++.I flags
++specified the creation of a new user namespace,
++but doing so would have caused the limit defined by the corresponding file in
++.IR /proc/sys/user
++to be exceeded.
++For further details, see
++.BR namespaces (7).
++.TP
+ .B EPERM
+ .BR CLONE_NEWIPC ,
+ .BR CLONE_NEWNET ,
+@@ -989,22 +1084,62 @@ was specified by an unprivileged process (process without \fBCAP_SYS_ADMIN\fP).
+ .B CLONE_PID
+ was specified by a process other than process 0.
+ .TP
++.B EPERM
++.BR CLONE_NEWUSER
++was specified in
++.IR flags ,
++but either the effective user ID or the effective group ID of the caller
++does not have a mapping in the parent namespace (see
++.BR user_namespaces (7)).
++.TP
++.BR EPERM " (since Linux 3.9)"
++.\" commit 3151527ee007b73a0ebd296010f1c0454a919c7d
++.B CLONE_NEWUSER
++was specified in
++.I flags
++and the caller is in a chroot environment
++.\" FIXME What is the rationale for this restriction?
++(i.e., the caller's root directory does not match the root directory
++of the mount namespace in which it resides).
++.TP
+ .BR ERESTARTNOINTR " (since Linux 2.6.17)"
++.\" commit 4a2c7a7837da1b91468e50426066d988050e4d56
+ System call was interrupted by a signal and will be restarted.
+ (This can be seen only during a trace.)
+-.SH VERSIONS
+-There is no entry for
+-.BR clone ()
+-in libc5.
+-glibc2 provides
+-.BR clone ()
+-as described in this manual page.
++.TP
++.BR EUSERS " (Linux 3.11 to Linux 4.8)"
++.B CLONE_NEWUSER
++was specified in
++.IR flags ,
++and the limit on the number of nested user namespaces would be exceeded.
++See the discussion of the
++.BR ENOSPC
++error above.
++.\" .SH VERSIONS
++.\" There is no entry for
++.\" .BR clone ()
++.\" in libc5.
++.\" glibc2 provides
++.\" .BR clone ()
++.\" as described in this manual page.
+ .SH CONFORMING TO
+ .BR clone ()
+ is Linux-specific and should not be used in programs
+ intended to be portable.
+ .SH NOTES
+-In the kernel 2.4.x series,
++The
++.BR kcmp (2)
++system call can be used to test whether two processes share various
++resources such as a file descriptor table,
++System V semaphore undo operations, or a virtual address space.
++
++
++Handlers registered using
++.BR pthread_atfork (3)
++are not executed during a call to
++.BR clone ().
++
++In the Linux 2.4.x series,
+ .B CLONE_THREAD
+ generally does not make the parent of the new thread the same
+ as the parent of the calling process.
+@@ -1012,14 +1147,13 @@ However, for kernel versions 2.4.7 to 2.4.18 the
+ .B CLONE_THREAD
+ flag implied the
+ .B CLONE_PARENT
+-flag (as in kernel 2.6).
++flag (as in Linux 2.6.0 and later).
+ 
+ For a while there was
+ .B CLONE_DETACHED
+ (introduced in 2.5.32):
+ parent wants no child-exit signal.
+-In 2.6.2 the need to give this
+-together with
++In Linux 2.6.2, the need to give this flag together with
+ .B CLONE_THREAD
+ disappeared.
+ This flag is still defined, but has no effect.
+@@ -1088,7 +1222,6 @@ To get the truth, it may be necessary to use code such as the following:
+ .\" https://bugzilla.redhat.com/show_bug.cgi?id=417521
+ .\" http://sourceware.org/bugzilla/show_bug.cgi?id=6910
+ .SH EXAMPLE
+-.SS Create a child that executes in a separate UTS namespace
+ The following program demonstrates the use of
+ .BR clone ()
+ to create a child process that executes in a separate UTS namespace.
+@@ -1098,7 +1231,7 @@ making it possible to see that the hostname
+ differs in the UTS namespaces of the parent and child.
+ For an example of the use of this program, see
+ .BR setns (2).
+-
++.SS Program source
+ .nf
+ #define _GNU_SOURCE
+ #include <sys/wait.h>
+@@ -1198,6 +1331,7 @@ main(int argc, char *argv[])
+ .BR unshare (2),
+ .BR wait (2),
+ .BR capabilities (7),
++.BR namespaces (7),
+ .BR pthreads (7)
+ .SH COLOPHON
+ This page is part of release 3.53 of the Linux
+diff --git a/man-pages/man2/clone.2 b/man-pages/man2/clone.2
+index d9ffe3e..d053b0e 100644
+--- a/man-pages/man2/clone.2
++++ b/man-pages/man2/clone.2
+@@ -39,50 +39,23 @@
+ .\" 2008-11-19, mtk, document CLONE_NEWIPC
+ .\" 2008-11-19, Jens Axboe, mtk, document CLONE_IO
+ .\"
+-.\" FIXME Document CLONE_NEWUSER, which is new in 2.6.23
+-.\"       (also supported for unshare()?)
+-.\"
+-.TH CLONE 2 2013-04-16 "Linux" "Linux Programmer's Manual"
++.TH CLONE 2 2016-12-12 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+ clone, __clone2 \- create a child process
+ .SH SYNOPSIS
+ .nf
+ /* Prototype for the glibc wrapper function */
+ 
++.B #define _GNU_SOURCE
+ .B #include <sched.h>
+ 
+ .BI "int clone(int (*" "fn" ")(void *), void *" child_stack ,
+ .BI "          int " flags ", void *" "arg" ", ... "
+-.BI "          /* pid_t *" ptid ", struct user_desc *" tls \
++.BI "          /* pid_t *" ptid ", void *" newtls \
+ ", pid_t *" ctid " */ );"
+ 
+-/* Prototype for the raw system call */
+-
+-.BI "long clone(unsigned long " flags ", void *" child_stack ,
+-.BI "          void *" ptid ", void *" ctid ,
+-.BI "          struct pt_regs *" regs );
++/* For the prototype of the raw system call, see NOTES */
+ .fi
+-.sp
+-.in -4n
+-Feature Test Macro Requirements for glibc wrapper function (see
+-.BR feature_test_macros (7)):
+-.in
+-.sp
+-.BR clone ():
+-.ad l
+-.RS 4
+-.PD 0
+-.TP 4
+-Since glibc 2.14:
+-_GNU_SOURCE
+-.TP 4
+-.\" FIXME See http://sources.redhat.com/bugzilla/show_bug.cgi?id=4749
+-Before glibc 2.14:
+-_BSD_SOURCE || _SVID_SOURCE
+-    /* _GNU_SOURCE also suffices */
+-.PD
+-.RE
+-.ad b
+ .SH DESCRIPTION
+ .BR clone ()
+ creates a new process, in a manner similar to
+@@ -107,7 +80,7 @@ But see the description of
+ .B CLONE_PARENT
+ below.)
+ 
+-The main use of
++One use of
+ .BR clone ()
+ is to implement threads: multiple threads of control in a program that
+ run concurrently in a shared memory space.
+@@ -180,7 +153,7 @@ in order to specify what is shared between the calling process
+ and the child process:
+ .TP
+ .BR CLONE_CHILD_CLEARTID " (since Linux 2.5.49)"
+-Erase child thread ID at location
++Clear (zero) the child thread ID at the location
+ .I ctid
+ in child memory when the child exits, and do a wakeup on the futex
+ at that address.
+@@ -190,9 +163,12 @@ system call.
+ This is used by threading libraries.
+ .TP
+ .BR CLONE_CHILD_SETTID " (since Linux 2.5.49)"
+-Store child thread ID at location
++Store the child thread ID at the location
+ .I ctid
+-in child memory.
++in the child's memory.
++The store operation completes before
++.BR clone ()
++returns control to user space.
+ .TP
+ .BR CLONE_FILES " (since Linux 2.0)"
+ If
+@@ -206,27 +182,31 @@ or changes its associated flags (using the
+ .BR fcntl (2)
+ .B F_SETFD
+ operation), the other process is also affected.
++If a process sharing a file descriptor table calls
++.BR execve (2),
++its file descriptor table is duplicated (unshared).
+ 
+ If
+ .B CLONE_FILES
+ is not set, the child process inherits a copy of all file descriptors
+ opened in the calling process at the time of
+ .BR clone ().
+-(The duplicated file descriptors in the child refer to the
+-same open file descriptions (see
+-.BR open (2))
+-as the corresponding file descriptors in the calling process.)
+ Subsequent operations that open or close file descriptors,
+ or change file descriptor flags,
+ performed by either the calling
+ process or the child process do not affect the other process.
++Note, however,
++that the duplicated file descriptors in the child refer to the same open file
++descriptions as the corresponding file descriptors in the calling process,
++and thus share file offsets and file status flags (see
++.BR open (2)).
+ .TP
+ .BR CLONE_FS " (since Linux 2.0)"
+ If
+ .B CLONE_FS
+-is set, the caller and the child process share the same file system
++is set, the caller and the child process share the same filesystem
+ information.
+-This includes the root of the file system, the current
++This includes the root of the filesystem, the current
+ working directory, and the umask.
+ Any call to
+ .BR chroot (2),
+@@ -238,7 +218,7 @@ other process.
+ 
+ If
+ .B CLONE_FS
+-is not set, the child process works on a copy of the file system
++is not set, the child process works on a copy of the filesystem
+ information of the calling process at the time of the
+ .BR clone ()
+ call.
+@@ -258,7 +238,7 @@ If this flag is not set, then (as with
+ the new process has its own I/O context.
+ 
+ .\" The following based on text from Jens Axboe
+-The I/O context is the I/O scope of the disk scheduler (i.e,
++The I/O context is the I/O scope of the disk scheduler (i.e.,
+ what the I/O scheduler uses to model scheduling of a process's I/O).
+ If processes share the same I/O context,
+ they are treated as one by the I/O scheduler.
+@@ -288,7 +268,7 @@ the process is created in the same IPC namespace as
+ the calling process.
+ This flag is intended for the implementation of containers.
+ 
+-An IPC namespace provides an isolated view of System V IPC objects (see
++An IPC namespace provides an isolated view of System\ V IPC objects (see
+ .BR svipc (7))
+ and (since Linux 2.6.30)
+ .\" commit 7eafd7c74c3f2e67c27621b987b28397110d643f
+@@ -308,17 +288,17 @@ When an IPC namespace is destroyed
+ (i.e., when the last process that is a member of the namespace terminates),
+ all IPC objects in the namespace are automatically destroyed.
+ 
+-Use of this flag requires: a kernel configured with the
+-.B CONFIG_SYSVIPC
+-and
+-.B CONFIG_IPC_NS
+-options and that the process be privileged
+-.RB ( CAP_SYS_ADMIN ).
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWIPC .
+ This flag can't be specified in conjunction with
+ .BR CLONE_SYSVSEM .
++
++For further information on IPC namespaces, see
++.BR namespaces (7).
+ .TP
+ .BR CLONE_NEWNET " (since Linux 2.6.24)"
+-.\" FIXME Check when the implementation was completed
+ (The implementation of this flag was completed only
+ by about kernel version 2.6.29.)
+ 
+@@ -326,7 +306,7 @@ If
+ .B CLONE_NEWNET
+ is set, then create the process in a new network namespace.
+ If this flag is not set, then (as with
+-.BR fork (2)),
++.BR fork (2))
+ the process is created in the same network namespace as
+ the calling process.
+ This flag is intended for the implementation of containers.
+@@ -341,7 +321,7 @@ directory trees, sockets, etc.).
+ A physical network device can live in exactly one
+ network namespace.
+ A virtual network device ("veth") pair provides a pipe-like abstraction
+-.\" FIXME Add pointer to veth(4) page when it is eventually completed
++.\" FIXME . Add pointer to veth(4) page when it is eventually completed
+ that can be used to create tunnels between network namespaces,
+ and can be used to create a bridge to a physical network device
+ in another namespace.
+@@ -350,54 +330,41 @@ When a network namespace is freed
+ (i.e., when the last process in the namespace terminates),
+ its physical network devices are moved back to the
+ initial network namespace (not to the parent of the process).
++For further information on network namespaces, see
++.BR namespaces (7).
+ 
+-Use of this flag requires: a kernel configured with the
+-.B CONFIG_NET_NS
+-option and that the process be privileged
+-.RB ( CAP_SYS_ADMIN ).
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWNET .
+ .TP
+ .BR CLONE_NEWNS " (since Linux 2.4.19)"
+-Start the child in a new mount namespace.
+-
+-Every process lives in a mount namespace.
+-The
+-.I namespace
+-of a process is the data (the set of mounts) describing the file hierarchy
+-as seen by that process.
+-After a
+-.BR fork (2)
+-or
+-.BR clone ()
+-where the
+-.B CLONE_NEWNS
+-flag is not set, the child lives in the same mount
+-namespace as the parent.
+-The system calls
+-.BR mount (2)
+-and
+-.BR umount (2)
+-change the mount namespace of the calling process, and hence affect
+-all processes that live in the same namespace, but do not affect
+-processes in a different mount namespace.
+-
+-After a
+-.BR clone ()
+-where the
++If
+ .B CLONE_NEWNS
+-flag is set, the cloned child is started in a new mount namespace,
++is set, the cloned child is started in a new mount namespace,
+ initialized with a copy of the namespace of the parent.
+-
+-Only a privileged process (one having the \fBCAP_SYS_ADMIN\fP capability)
+-may specify the
++If
+ .B CLONE_NEWNS
+-flag.
++is not set, the child lives in the same mount
++namespace as the parent.
++
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWNS .
+ It is not permitted to specify both
+ .B CLONE_NEWNS
+ and
+ .B CLONE_FS
++.\" See https://lwn.net/Articles/543273/
+ in the same
+ .BR clone ()
+ call.
++
++For further information on mount namespaces, see
++.BR namespaces (7)
++and
++.BR mount_namespaces (7).
+ .TP
+ .BR CLONE_NEWPID " (since Linux 2.6.24)"
+ .\" This explanation draws a lot of details from
+@@ -411,73 +378,74 @@ If
+ .B CLONE_NEWPID
+ is set, then create the process in a new PID namespace.
+ If this flag is not set, then (as with
+-.BR fork (2)),
++.BR fork (2))
+ the process is created in the same PID namespace as
+ the calling process.
+ This flag is intended for the implementation of containers.
+ 
+-A PID namespace provides an isolated environment for PIDs:
+-PIDs in a new namespace start at 1,
+-somewhat like a standalone system, and calls to
+-.BR fork (2),
+-.BR vfork (2),
++For further information on PID namespaces, see
++.BR namespaces (7)
++and
++.BR pid_namespaces (7).
++
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWPID .
++This flag can't be specified in conjunction with
++.BR CLONE_THREAD
+ or
++.BR CLONE_PARENT .
++.TP
++.BR CLONE_NEWUSER
++(This flag first became meaningful for
+ .BR clone ()
+-will produce processes with PIDs that are unique within the namespace.
++in Linux 2.6.23,
++the current
++.BR clone ()
++semantics were merged in Linux 3.5,
++and the final pieces to make the user namespaces completely usable were
++merged in Linux 3.8.)
+ 
+-The first process created in a new namespace
+-(i.e., the process created using the
+-.BR CLONE_NEWPID
+-flag) has the PID 1, and is the "init" process for the namespace.
+-Children that are orphaned within the namespace will be reparented
+-to this process rather than
+-.BR init (8).
+-Unlike the traditional
+-.B init
+-process, the "init" process of a PID namespace can terminate,
+-and if it does, all of the processes in the namespace are terminated.
+-
+-PID namespaces form a hierarchy.
+-When a new PID namespace is created,
+-the processes in that namespace are visible
+-in the PID namespace of the process that created the new namespace;
+-analogously, if the parent PID namespace is itself
+-the child of another PID namespace,
+-then processes in the child and parent PID namespaces will both be
+-visible in the grandparent PID namespace.
+-Conversely, the processes in the "child" PID namespace do not see
+-the processes in the parent namespace.
+-The existence of a namespace hierarchy means that each process
+-may now have multiple PIDs:
+-one for each namespace in which it is visible;
+-each of these PIDs is unique within the corresponding namespace.
+-(A call to
+-.BR getpid (2)
+-always returns the PID associated with the namespace in which
+-the process lives.)
+-
+-After creating the new namespace,
+-it is useful for the child to change its root directory
+-and mount a new procfs instance at
+-.I /proc
+-so that tools such as
+-.BR ps (1)
+-work correctly.
+-.\" mount -t proc proc /proc
+-(If
+-.BR CLONE_NEWNS
+-is also included in
+-.IR flags ,
+-then it isn't necessary to change the root directory:
+-a new procfs instance can be mounted directly over
+-.IR /proc .)
++If
++.B CLONE_NEWUSER
++is set, then create the process in a new user namespace.
++If this flag is not set, then (as with
++.BR fork (2))
++the process is created in the same user namespace as the calling process.
++
++For further information on user namespaces, see
++.BR namespaces (7)
++and
++.BR user_namespaces (7)
++
++Before Linux 3.8, use of
++.BR CLONE_NEWUSER
++required that the caller have three capabilities:
++.BR CAP_SYS_ADMIN ,
++.BR CAP_SETUID ,
++and
++.BR CAP_SETGID .
++.\" Before Linux 2.6.29, it appears that only CAP_SYS_ADMIN was needed
++Starting with Linux 3.8,
++no privileges are needed to create a user namespace.
+ 
+-Use of this flag requires: a kernel configured with the
+-.B CONFIG_PID_NS
+-option and that the process be privileged
+-.RB ( CAP_SYS_ADMIN ).
+ This flag can't be specified in conjunction with
+-.BR CLONE_THREAD .
++.BR CLONE_THREAD
++or
++.BR CLONE_PARENT .
++For security reasons,
++.\" commit e66eded8309ebf679d3d3c1f5820d1f2ca332c71
++.\" https://lwn.net/Articles/543273/
++.\" The fix actually went into 3.9 and into 3.8.3. However, user namespaces
++.\" were, for practical purposes, unusable in earlier 3.8.x because of the
++.\" various filesystems that didn't support userns.
++.BR CLONE_NEWUSER
++cannot be specified in conjunction with
++.BR CLONE_FS .
++
++For further information on user namespaces, see
++.BR user_namespaces (7).
+ .TP
+ .BR CLONE_NEWUTS " (since Linux 2.6.19)"
+ If
+@@ -486,27 +454,29 @@ is set, then create the process in a new UTS namespace,
+ whose identifiers are initialized by duplicating the identifiers
+ from the UTS namespace of the calling process.
+ If this flag is not set, then (as with
+-.BR fork (2)),
++.BR fork (2))
+ the process is created in the same UTS namespace as
+ the calling process.
+ This flag is intended for the implementation of containers.
+ 
+ A UTS namespace is the set of identifiers returned by
+ .BR uname (2);
+-among these, the domain name and the host name can be modified by
++among these, the domain name and the hostname can be modified by
+ .BR setdomainname (2)
+ and
+-.BR
+ .BR sethostname (2),
+ respectively.
+ Changes made to the identifiers in a UTS namespace
+ are visible to all other processes in the same namespace,
+ but are not visible to processes in other UTS namespaces.
+ 
+-Use of this flag requires: a kernel configured with the
+-.B CONFIG_UTS_NS
+-option and that the process be privileged
+-.RB ( CAP_SYS_ADMIN ).
++Only a privileged process
++.RB ( CAP_SYS_ADMIN )
++can employ
++.BR CLONE_NEWUTS .
++
++For further information on UTS namespaces, see
++.BR namespaces (7).
+ .TP
+ .BR CLONE_PARENT " (since Linux 2.3.12)"
+ If
+@@ -530,12 +500,15 @@ is set, then the parent of the calling process, rather than the
+ calling process itself, will be signaled.
+ .TP
+ .BR CLONE_PARENT_SETTID " (since Linux 2.5.49)"
+-Store child thread ID at location
++Store the child thread ID at the location
+ .I ptid
+-in parent and child memory.
++in the parent's memory.
+ (In Linux 2.5.32-2.5.48 there was a flag
+ .B CLONE_SETTID
+ that did this.)
++The store operation completes before
++.BR clone ()
++returns control to user space.
+ .TP
+ .BR CLONE_PID " (obsolete)"
+ If
+@@ -547,6 +520,7 @@ of not much use.
+ Since 2.3.21 this flag can be
+ specified only by the system boot process (PID 0).
+ It disappeared in Linux 2.5.16.
++Since then, the kernel silently ignores it without error.
+ .TP
+ .BR CLONE_PTRACE " (since Linux 2.2)"
+ If
+@@ -556,11 +530,25 @@ then trace the child also (see
+ .BR ptrace (2)).
+ .TP
+ .BR CLONE_SETTLS " (since Linux 2.5.32)"
+-The
++The TLS (Thread Local Storage) descriptor is set to
++.I newtls.
++
++The interpretation of
+ .I newtls
+-argument is the new TLS (Thread Local Storage) descriptor.
++and the resulting effect is architecture dependent.
++On x86,
++.I newtls
++is interpreted as a
++.IR "struct user_desc *"
+ (See
+-.BR set_thread_area (2).)
++.BR set_thread_area (2)).
++On x86_64 it is the new value to be set for the %fs base register
++(See the
++.I ARCH_SET_FS
++argument to
++.BR arch_prctl (2)).
++On architectures with a dedicated TLS register, it is the new value
++of that register.
+ .TP
+ .BR CLONE_SIGHAND " (since Linux 2.0)"
+ If
+@@ -612,16 +600,26 @@ from Linux 2.6.25 onward,
+ and was
+ .I removed
+ altogether in Linux 2.6.38.
++Since then, the kernel silently ignores it without error.
+ .\" glibc 2.8 removed this defn from bits/sched.h
+ .TP
+ .BR CLONE_SYSVSEM " (since Linux 2.5.10)"
+ If
+ .B CLONE_SYSVSEM
+ is set, then the child and the calling process share
+-a single list of System V semaphore undo values (see
++a single list of System V semaphore adjustment
++.RI ( semadj )
++values (see
+ .BR semop (2)).
+-If this flag is not set, then the child has a separate undo list,
+-which is initially empty.
++In this case, the shared list accumulates
++.I semadj
++values across all processes sharing the list,
++and semaphore adjustments are performed only when the last process
++that is sharing the list terminates (or ceases sharing the list using
++.BR unshare (2)).
++If this flag is not set, then the child has a separate
++.I semadj
++list that is initially empty.
+ .TP
+ .BR CLONE_THREAD " (since Linux 2.4.0-test8)"
+ If
+@@ -703,7 +701,12 @@ must also include
+ .B CLONE_SIGHAND
+ if
+ .B CLONE_THREAD
+-is specified.
++is specified
++(and note that, since Linux 2.6.0-test6,
++.BR CLONE_SIGHAND
++also requires
++.BR CLONE_VM
++to be included).
+ 
+ Signals may be sent to a thread group as a whole (i.e., a TGID) using
+ .BR kill (2),
+@@ -761,7 +764,7 @@ or
+ 
+ If
+ .B CLONE_VFORK
+-is not set then both the calling process and the child are schedulable
++is not set, then both the calling process and the child are schedulable
+ after the call, and an application should not rely on execution occurring
+ in any particular order.
+ .TP
+@@ -786,7 +789,7 @@ space of the calling process at the time of
+ Memory writes or file mappings/unmappings performed by one of the
+ processes do not affect the other, as with
+ .BR fork (2).
+-.SS The raw system call interface
++.SS C library/kernel differences
+ The raw
+ .BR clone ()
+ system call corresponds more closely to
+@@ -801,16 +804,58 @@ arguments of the
+ .BR clone ()
+ wrapper function are omitted.
+ Furthermore, the argument order changes.
+-The raw system call interface on x86 and many other architectures is roughly:
++In addition, there are variations across architectures.
++
++The raw system call interface on x86-64 and some other architectures
++(including sh, tile, and alpha) is roughly:
++
+ .in +4
+ .nf
++.BI "long clone(unsigned long " flags ", void *" child_stack ,
++.BI "           int *" ptid ", int *" ctid ,
++.BI "           unsigned long " newtls );
++.fi
++.in
++
++On x86-32, and several other common architectures
++(including score, ARM, ARM 64, PA-RISC, arc, Power PC, xtensa,
++and MIPS),
++.\" CONFIG_CLONE_BACKWARDS
++the order of the last two arguments is reversed:
+ 
++.in +4
++.nf
+ .BI "long clone(unsigned long " flags ", void *" child_stack ,
+-.BI "           void *" ptid ", void *" ctid ,
+-.BI "           struct pt_regs *" regs );
++.BI "          int *" ptid ", unsigned long " newtls ,
++.BI "          int *" ctid );
++.fi
++.in
++
++On the cris and s390 architectures,
++.\" CONFIG_CLONE_BACKWARDS2
++the order of the first two arguments is reversed:
+ 
++.in +4
++.nf
++.BI "long clone(void *" child_stack ", unsigned long " flags ,
++.BI "           int *" ptid ", int *" ctid ,
++.BI "           unsigned long " newtls );
++.fi
++.in
++
++On the microblaze architecture,
++.\" CONFIG_CLONE_BACKWARDS3
++an additional argument is supplied:
++
++.in +4
++.nf
++.BI "long clone(unsigned long " flags ", void *" child_stack ,
++.BI "           int " stack_size , "\fR         /* Size of stack */"
++.BI "           int *" ptid ", int *" ctid ,
++.BI "           unsigned long " newtls );
+ .fi
+ .in
++
+ Another difference for the raw system call is that the
+ .I child_stack
+ argument may be zero, in which case copy-on-write semantics ensure that the
+@@ -819,17 +864,13 @@ the stack.
+ In this case, for correct operation, the
+ .B CLONE_VM
+ option should not be specified.
+-
+-For some architectures, the order of the arguments for the system call
+-differs from that shown above.
+-On the score, microblaze, ARM, ARM 64, PA-RISC, arc, Power PC, xtensa,
+-and MIPS architectures,
+-the order of the fourth and fifth arguments is reversed.
+-On the cris and s390 architectures,
+-the order of the first and second arguments is reversed.
++.\"
+ .SS blackfin, m68k, and sparc
++.\" Mike Frysinger noted in a 2013 mail:
++.\"     these arches don't define __ARCH_WANT_SYS_CLONE:
++.\"     blackfin ia64 m68k sparc
+ The argument-passing conventions on
+-blackfin, m68k, and sparc are different from descriptions above.
++blackfin, m68k, and sparc are different from the descriptions above.
+ For details, see the kernel (and glibc) source.
+ .SS ia64
+ On ia64, a different interface is used:
+@@ -883,7 +924,8 @@ will be set appropriately.
+ .SH ERRORS
+ .TP
+ .B EAGAIN
+-Too many processes are already running.
++Too many processes are already running; see
++.BR fork (2).
+ .TP
+ .B EINVAL
+ .B CLONE_SIGHAND
+@@ -908,6 +950,7 @@ was not.
+ .\" (Since Linux 2.6.0-test6.)
+ .TP
+ .B EINVAL
++.\" commit e66eded8309ebf679d3d3c1f5820d1f2ca332c71
+ Both
+ .B CLONE_FS
+ and
+@@ -915,6 +958,14 @@ and
+ were specified in
+ .IR flags .
+ .TP
++.BR EINVAL " (since Linux 3.9)"
++Both
++.B CLONE_NEWUSER
++and
++.B CLONE_FS
++were specified in
++.IR flags .
++.TP
+ .B EINVAL
+ Both
+ .B CLONE_NEWIPC
+@@ -924,18 +975,25 @@ were specified in
+ .IR flags .
+ .TP
+ .B EINVAL
+-Both
++One (or both) of
+ .BR CLONE_NEWPID
+-and
++or
++.BR CLONE_NEWUSER
++and one (or both) of
+ .BR CLONE_THREAD
++or
++.BR CLONE_PARENT
+ were specified in
+ .IR flags .
+ .TP
+ .B EINVAL
+-Returned by
++Returned by the glibc
+ .BR clone ()
+-when a zero value is specified for
+-.IR child_stack .
++wrapper function when
++.IR fn
++or
++.IR child_stack
++is specified as NULL.
+ .TP
+ .B EINVAL
+ .BR CLONE_NEWIPC
+@@ -971,11 +1029,48 @@ but the kernel was not configured with the
+ .B CONFIG_UTS
+ option.
+ .TP
++.B EINVAL
++.I child_stack
++is not aligned to a suitable boundary for this architecture.
++For example, on aarch64,
++.I child_stack
++must be a multiple of 16.
++.TP
+ .B ENOMEM
+ Cannot allocate sufficient memory to allocate a task structure for the
+ child, or to copy those parts of the caller's context that need to be
+ copied.
+ .TP
++.BR ENOSPC " (since Linux 3.7)"
++.\" commit f2302505775fd13ba93f034206f1e2a587017929
++.B CLONE_NEWPID
++was specified in flags,
++but the limit on the nesting depth of PID namespaces
++would have been exceeded; see
++.BR pid_namespaces (7).
++.TP
++.BR ENOSPC " (since Linux 4.9; beforehand " EUSERS )
++.B CLONE_NEWUSER
++was specified in
++.IR flags ,
++and the call would cause the limit on the number of
++nested user namespaces to be exceeded.
++See
++.BR user_namespaces (7).
++
++From Linux 3.11 to Linux 4.8, the error diagnosed in this case was
++.BR EUSERS .
++.TP
++.BR ENOSPC " (since Linux 4.9)"
++One of the values in
++.I flags
++specified the creation of a new user namespace,
++but doing so would have caused the limit defined by the corresponding file in
++.IR /proc/sys/user
++to be exceeded.
++For further details, see
++.BR namespaces (7).
++.TP
+ .B EPERM
+ .BR CLONE_NEWIPC ,
+ .BR CLONE_NEWNET ,
+@@ -989,22 +1084,62 @@ was specified by an unprivileged process (process without \fBCAP_SYS_ADMIN\fP).
+ .B CLONE_PID
+ was specified by a process other than process 0.
+ .TP
++.B EPERM
++.BR CLONE_NEWUSER
++was specified in
++.IR flags ,
++but either the effective user ID or the effective group ID of the caller
++does not have a mapping in the parent namespace (see
++.BR user_namespaces (7)).
++.TP
++.BR EPERM " (since Linux 3.9)"
++.\" commit 3151527ee007b73a0ebd296010f1c0454a919c7d
++.B CLONE_NEWUSER
++was specified in
++.I flags
++and the caller is in a chroot environment
++.\" FIXME What is the rationale for this restriction?
++(i.e., the caller's root directory does not match the root directory
++of the mount namespace in which it resides).
++.TP
+ .BR ERESTARTNOINTR " (since Linux 2.6.17)"
++.\" commit 4a2c7a7837da1b91468e50426066d988050e4d56
+ System call was interrupted by a signal and will be restarted.
+ (This can be seen only during a trace.)
+-.SH VERSIONS
+-There is no entry for
+-.BR clone ()
+-in libc5.
+-glibc2 provides
+-.BR clone ()
+-as described in this manual page.
++.TP
++.BR EUSERS " (Linux 3.11 to Linux 4.8)"
++.B CLONE_NEWUSER
++was specified in
++.IR flags ,
++and the limit on the number of nested user namespaces would be exceeded.
++See the discussion of the
++.BR ENOSPC
++error above.
++.\" .SH VERSIONS
++.\" There is no entry for
++.\" .BR clone ()
++.\" in libc5.
++.\" glibc2 provides
++.\" .BR clone ()
++.\" as described in this manual page.
+ .SH CONFORMING TO
+ .BR clone ()
+ is Linux-specific and should not be used in programs
+ intended to be portable.
+ .SH NOTES
+-In the kernel 2.4.x series,
++The
++.BR kcmp (2)
++system call can be used to test whether two processes share various
++resources such as a file descriptor table,
++System V semaphore undo operations, or a virtual address space.
++
++
++Handlers registered using
++.BR pthread_atfork (3)
++are not executed during a call to
++.BR clone ().
++
++In the Linux 2.4.x series,
+ .B CLONE_THREAD
+ generally does not make the parent of the new thread the same
+ as the parent of the calling process.
+@@ -1012,14 +1147,13 @@ However, for kernel versions 2.4.7 to 2.4.18 the
+ .B CLONE_THREAD
+ flag implied the
+ .B CLONE_PARENT
+-flag (as in kernel 2.6).
++flag (as in Linux 2.6.0 and later).
+ 
+ For a while there was
+ .B CLONE_DETACHED
+ (introduced in 2.5.32):
+ parent wants no child-exit signal.
+-In 2.6.2 the need to give this
+-together with
++In Linux 2.6.2, the need to give this flag together with
+ .B CLONE_THREAD
+ disappeared.
+ This flag is still defined, but has no effect.
+@@ -1071,7 +1205,6 @@ To get the truth, it may be necessary to use code such as the following:
+ .\" https://bugzilla.redhat.com/show_bug.cgi?id=417521
+ .\" http://sourceware.org/bugzilla/show_bug.cgi?id=6910
+ .SH EXAMPLE
+-.SS Create a child that executes in a separate UTS namespace
+ The following program demonstrates the use of
+ .BR clone ()
+ to create a child process that executes in a separate UTS namespace.
+@@ -1081,7 +1214,7 @@ making it possible to see that the hostname
+ differs in the UTS namespaces of the parent and child.
+ For an example of the use of this program, see
+ .BR setns (2).
+-
++.SS Program source
+ .nf
+ #define _GNU_SOURCE
+ #include <sys/wait.h>
+@@ -1181,6 +1314,7 @@ main(int argc, char *argv[])
+ .BR unshare (2),
+ .BR wait (2),
+ .BR capabilities (7),
++.BR namespaces (7),
+ .BR pthreads (7)
+ .SH COLOPHON
+ This page is part of release 3.53 of the Linux
+-- 
+2.7.4
+

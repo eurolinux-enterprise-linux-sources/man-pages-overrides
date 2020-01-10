@@ -1,0 +1,37 @@
+From 6eb0f94188ac99b122693c79302c60c9ec9aef08 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nikola=20Forr=C3=B3?= <nforro@redhat.com>
+Date: Tue, 28 Mar 2017 14:49:57 +0200
+Subject: [PATCH 1/6] ipvsadm.8: add missing option
+
+---
+ ipvsadm/man8/ipvsadm.8 | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/ipvsadm/man8/ipvsadm.8 b/ipvsadm/man8/ipvsadm.8
+index 9a9e9b3..263e873 100644
+--- a/ipvsadm/man8/ipvsadm.8
++++ b/ipvsadm/man8/ipvsadm.8
+@@ -37,7 +37,9 @@ ipvsadm \- Linux Virtual Server administration
+ .SH SYNOPSIS
+ .B ipvsadm -A|E -t|u|f \fIservice-address\fP [-s \fIscheduler\fP]
+ .ti 15
+-.B [-p [\fItimeout\fP]] [-M \fInetmask\fP] [-b \fIsched-flags\fP]
++.B [-p [\fItimeout\fP]] [-M \fInetmask\fP] [--pe \fIpersistence_engine\fP]
++.ti 15
++.B [-b \fIsched-flags\fP]
+ .br
+ .B ipvsadm -D -t|u|f \fIservice-address\fP
+ .br
+@@ -262,6 +264,9 @@ fixed service rate (weight) of the ith server.
+ there is, instead of waiting for a fast one; if all the servers are
+ busy, it adopts the Shortest Expected Delay policy to assign the job.
+ .TP
++.B --pe \fIpersistence_engine\fR
++Alternate persistence engine may be sip, not set by default.
++.TP
+ .B -p, --persistent [\fItimeout\fP]
+ Specify that a virtual service is persistent. If this option is
+ specified, multiple requests from a client are redirected to the same
+-- 
+2.7.4
+
